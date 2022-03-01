@@ -100,4 +100,3 @@ puts "Result code is: #{result_code}"
 model = Z3.solver_get_model(ctx, solver)
 s = Z3.model_to_string(ctx, model)
 puts String.new(s)
-
