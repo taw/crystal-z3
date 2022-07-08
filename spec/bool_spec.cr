@@ -103,4 +103,22 @@ describe Z3::BoolExpr do
     expect_raises(Z3::Exception) { a.to_b }
     expect_raises(Z3::Exception) { (a | b).to_b }
   end
+
+  it "Z3.or" do
+    [a == Z3.or([] of Z3::BoolExpr)].should have_solution({a => false})
+    [a == Z3.or([true, false])].should have_solution({a => true})
+    [a == Z3.or([false, false])].should have_solution({a => false})
+    [a == Z3.or([false, b]), b == false].should have_solution({a => false})
+    [a == Z3.or([false, b]), b == true].should have_solution({a => true})
+    [a == Z3.or([true, false, b]), b == true].should have_solution({a => true})
+  end
+
+  it "Z3.and" do
+    [a == Z3.and([] of Z3::BoolExpr)].should have_solution({a => true})
+    [a == Z3.and([true, false])].should have_solution({a => false})
+    [a == Z3.and([true, true])].should have_solution({a => true})
+    [a == Z3.and([true, b]), b == false].should have_solution({a => false})
+    [a == Z3.and([true, b]), b == true].should have_solution({a => true})
+    [a == Z3.and([true, false, b]), b == true].should have_solution({a => false})
+  end
 end

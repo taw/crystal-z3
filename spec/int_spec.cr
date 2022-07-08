@@ -121,4 +121,70 @@ describe Z3::IntExpr do
     expect_raises(Z3::Exception){ a.to_i }
     expect_raises(Z3::Exception){ (a + b).to_i }
   end
+
+  it "Z3.distinct" do
+    [
+      2 >= a,
+      a >= b,
+      b >= c,
+      c >= 0,
+      Z3.distinct([a, b, c]),
+    ].should have_solution({
+      a => 2,
+      b => 1,
+      c => 0
+    })
+  end
+
+  it "Z3.add" do
+    [
+      a == 10,
+      b == 20,
+      c == Z3.add([a, 30, b])
+    ].should have_solution({
+      c => 60,
+    })
+    [
+      a == Z3.add([] of Z3::IntExpr),
+    ].should have_solution({
+      a => 0,
+    })
+    [
+      a == Z3.add([b]),
+      b == 10,
+    ].should have_solution({
+      a => 10,
+    })
+    [
+      a == Z3.add([10]),
+    ].should have_solution({
+      a => 10,
+    })
+  end
+
+  it "Z3.mul" do
+    [
+      a == 10,
+      b == 20,
+      c == Z3.mul([a, 30, b])
+    ].should have_solution({
+      c => 6000,
+    })
+    [
+      a == Z3.mul([] of Z3::IntExpr),
+    ].should have_solution({
+      a => 1,
+    })
+    [
+      a == Z3.mul([b]),
+      b == 10,
+    ].should have_solution({
+      a => 10,
+    })
+    [
+      a == Z3.mul([10]),
+    ].should have_solution({
+      a => 10,
+    })
+  end
 end
