@@ -8,6 +8,8 @@ describe "Integration Tests" do
   it "SEND + MORE = MONEY" do
     actual = `./examples/send_more_money.cr`
     expected = File.read("#{__DIR__}/integration/send_more_money.txt")
-    actual.should eq(expected)
+    # Z3's model_to_string order is version-dependent (Ruby's insertion-ordered
+    # hashes hid this), so compare the lines order-independently
+    actual.lines.sort.should eq(expected.lines.sort)
   end
 end
