@@ -208,4 +208,44 @@ describe Z3::BitvecExpr do
     expect_raises(Z3::Exception){ a.to_i }
     expect_raises(Z3::Exception){ (a + b).to_i }
   end
+
+  it "#to_int" do
+    i = Z3.int("i")
+    [a == 200, i == a.to_int].should have_solution({i => 200})
+    [a == 200, i == a.to_int(true)].should have_solution({i => -56})
+  end
+
+  it "add overflow / underflow" do
+    expect_raises(Z3::Exception) { a.add_no_overflow?(b) }
+    expect_raises(Z3::Exception) { a.unsigned_add_no_underflow?(b) }
+    [a == 100, b ==  20, x == a.signed_add_no_overflow?(b)].should have_solution({x => true})
+    [a == 100, b == 100, x == a.signed_add_no_overflow?(b)].should have_solution({x => false})
+    [a == 200, b == 100, x == a.unsigned_add_no_overflow?(b)].should have_solution({x => false})
+    [a == 100, b == 100, x == a.unsigned_add_no_overflow?(b)].should have_solution({x => true})
+    [a == -50, b == -50, x == a.add_no_underflow?(b)].should have_solution({x => true})
+    [a == -100, b == -100, x == a.add_no_underflow?(b)].should have_solution({x => false})
+  end
+
+  it "neg overflow" do
+    expect_raises(Z3::Exception) { a.unsigned_neg_no_overflow? }
+    [a == 5, x == a.signed_neg_no_overflow?].should have_solution({x => true})
+    [a == -128, x == a.signed_neg_no_overflow?].should have_solution({x => false})
+  end
+
+  it "mul overflow / underflow" do
+    expect_raises(Z3::Exception) { a.mul_no_overflow?(b) }
+    expect_raises(Z3::Exception) { a.unsigned_mul_no_underflow?(b) }
+    [a == 10, b == 10, x == a.signed_mul_no_overflow?(b)].should have_solution({x => true})
+    [a == 20, b == 20, x == a.signed_mul_no_overflow?(b)].should have_solution({x => false})
+    [a == 10, b == 10, x == a.unsigned_mul_no_overflow?(b)].should have_solution({x => true})
+    [a == 20, b == 20, x == a.unsigned_mul_no_overflow?(b)].should have_solution({x => false})
+    [a == 10, b == -10, x == a.mul_no_underflow?(b)].should have_solution({x => true})
+    [a == 100, b == -100, x == a.mul_no_underflow?(b)].should have_solution({x => false})
+  end
+
+  it "div overflow" do
+    expect_raises(Z3::Exception) { a.unsigned_div_no_overflow?(b) }
+    [a == 100, b == 2, x == a.signed_div_no_overflow?(b)].should have_solution({x => true})
+    [a == -128, b == -1, x == a.signed_div_no_overflow?(b)].should have_solution({x => false})
+  end
 end

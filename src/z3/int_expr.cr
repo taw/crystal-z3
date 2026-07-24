@@ -63,6 +63,14 @@ module Z3
       IntExpr.new API.mk_unary_minus(self)
     end
 
+    def to_real
+      RealExpr.new API.mk_int2real(self)
+    end
+
+    def to_bitvec(n : Int)
+      BitvecExpr.new API.mk_int2bv(n.to_u32, self), BitvecSort.new(n.to_u32)
+    end
+
     def simplify
       IntExpr.new API.simplify(self)
     end

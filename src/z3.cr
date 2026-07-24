@@ -8,6 +8,18 @@ module Z3
     BoolExpr.new API.mk_distinct(args)
   end
 
+  def Z3.distinct(args : Array(RealExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
+  def Z3.distinct(args : Array(BoolExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
+  def Z3.distinct(args : Array(BitvecExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
   def Z3.int(name)
     Z3::IntSort[name]
   end
@@ -29,7 +41,7 @@ module Z3
     [v0, v1, v2, v3].join(".")
   end
 
-  def Z3.add(args : Array(IntExpr | Int))
+  def Z3.add(args : Array(IntExpr | Int32))
     if args.empty?
       IntSort[0]
     else
@@ -37,11 +49,27 @@ module Z3
     end
   end
 
-  def Z3.mul(args : Array(IntExpr | Int))
+  def Z3.mul(args : Array(IntExpr | Int32))
     if args.empty?
       IntSort[1]
     else
       IntExpr.new API.mk_mul(args.map{|a| IntSort[a]})
+    end
+  end
+
+  def Z3.add(args : Array(RealExpr))
+    if args.empty?
+      RealSort[0]
+    else
+      RealExpr.new API.mk_add(args)
+    end
+  end
+
+  def Z3.mul(args : Array(RealExpr))
+    if args.empty?
+      RealSort[1]
+    else
+      RealExpr.new API.mk_mul(args)
     end
   end
 
@@ -51,5 +79,14 @@ module Z3
 
   def Z3.or(args : Array(BoolExpr | Bool))
     BoolExpr.new API.mk_or(args.map{|a| BoolSort[a]})
+  end
+
+  # Bitvec has no n-ary and/or in Z3, so reduce with the bitwise operators.
+  def Z3.and(args : Array(BitvecExpr))
+    args.reduce { |a, b| a & b }
+  end
+
+  def Z3.or(args : Array(BitvecExpr))
+    args.reduce { |a, b| a | b }
   end
 end

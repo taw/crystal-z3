@@ -85,4 +85,46 @@ describe Z3::Model do
     model[g].to_s.should eq("7/2")
     model[h].to_s.should eq("0")
   end
+
+  it "#num_consts, #consts, #each" do
+    solver = Z3::Solver.new
+    solver.assert a == true
+    solver.assert c == 42
+    model = solver.model
+    model.num_consts.should eq(2)
+    model.consts.map(&.to_s).sort.should eq(["a", "c"])
+    pairs = {} of String => String
+    model.each { |var, value| pairs[var.to_s] = value.to_s }
+    pairs.should eq({"a" => "true", "c" => "42"})
+  end
+
+  it "#negate excludes the current model" do
+    solver = Z3::Solver.new
+    solver.assert c == 42
+    model = solver.model
+    # c == 42 has a unique solution, so ruling it out makes the problem unsat
+    solver.assert model.negate
+    solver.satisfiable?.should be_false
+  end
+
+  it "#negate enumerates solutions" do
+    solver = Z3::Solver.new
+    solver.assert c >= 1
+    solver.assert c <= 3
+    seen = [] of Int32
+    3.times do
+      break unless solver.satisfiable?
+      value = solver.model[c].to_i
+      seen << value
+      solver.assert solver.model.negate
+    end
+    seen.sort.should eq([1, 2, 3])
+    solver.satisfiable?.should be_false
+  end
+
+  it "#negate of a model with no consts constrains nothing" do
+    solver = Z3::Solver.new
+    model = solver.model
+    model.negate.to_b.should eq(false)
+  end
 end

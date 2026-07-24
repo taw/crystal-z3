@@ -1,4 +1,8 @@
 module Z3
+  # Any expression, regardless of sort. This is what we can recover from a raw
+  # AST pointer, since Z3 only tells us the sort kind at runtime.
+  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr
+
   module API
     extend self
 
@@ -6,17 +10,25 @@ module Z3
 
     {% for name in %w[
       get_ast_kind
+      get_range
+      mk_bv2int
       mk_bvadd
+      mk_bvadd_no_overflow
+      mk_bvadd_no_underflow
       mk_bvand
       mk_bvashr
       mk_bvlshr
       mk_bvmul
+      mk_bvmul_no_overflow
+      mk_bvmul_no_underflow
       mk_bvnand
       mk_bvneg
+      mk_bvneg_no_overflow
       mk_bvnor
       mk_bvnot
       mk_bvor
       mk_bvsdiv
+      mk_bvsdiv_no_overflow
       mk_bvsge
       mk_bvsgt
       mk_bvshl
@@ -42,12 +54,15 @@ module Z3
       mk_gt
       mk_iff
       mk_implies
+      mk_int2bv
+      mk_int2real
       mk_ite
       mk_le
       mk_lt
       mk_mod
       mk_not
       mk_power
+      mk_real2int
       mk_rem
       mk_rotate_left
       mk_rotate_right
@@ -57,10 +72,19 @@ module Z3
       mk_unary_minus
       mk_xor
       mk_zero_ext
+      model_get_const_decl
+      model_get_num_consts
+      model_inc_ref
       simplify
       solver_assert
+      solver_assert_and_track
       solver_check
       solver_get_model
+      solver_get_num_scopes
+      solver_inc_ref
+      solver_pop
+      solver_push
+      solver_reset
     ] %}
       def {{name.id}}(*args)
         LibZ3.{{name.id}}(Context, *args)
@@ -129,6 +153,58 @@ module Z3
       else
         raise "Unsupported sort kind #{sort_kind}"
       end
+    end
+
+    def get_decl_name(decl)
+      String.new LibZ3.get_symbol_string(Context, LibZ3.get_decl_name(Context, decl))
+    end
+
+    def model_get_const_interp(model, decl)
+      new_from_ast_pointer LibZ3.model_get_const_interp(Context, model, decl)
+    end
+
+    def solver_to_string(solver)
+      String.new LibZ3.solver_to_string(Context, solver)
+    end
+
+    def solver_get_reason_unknown(solver)
+      String.new LibZ3.solver_get_reason_unknown(Context, solver)
+    end
+
+    def solver_get_assertions(solver)
+      read_ast_vector LibZ3.solver_get_assertions(Context, solver)
+    end
+
+    def solver_get_unsat_core(solver)
+      read_ast_vector LibZ3.solver_get_unsat_core(Context, solver)
+    end
+
+    def solver_get_statistics(solver)
+      stats = LibZ3.solver_get_statistics(Context, solver)
+      size = LibZ3.stats_size(Context, stats)
+      result = {} of String => (UInt32 | Float64)
+      size.times do |i|
+        key = String.new LibZ3.stats_get_key(Context, stats, i)
+        if LibZ3.stats_is_uint(Context, stats, i)
+          result[key] = LibZ3.stats_get_uint_value(Context, stats, i)
+        else
+          result[key] = LibZ3.stats_get_double_value(Context, stats, i)
+        end
+      end
+      result
+    end
+
+    def read_ast_vector(vec)
+      # Z3 hands back the vector at refcount 0, so hold a ref while we read it
+      # or it gets reclaimed out from under us.
+      LibZ3.ast_vector_inc_ref(Context, vec)
+      size = LibZ3.ast_vector_size(Context, vec)
+      result = [] of AnyExpr
+      size.times do |i|
+        result << new_from_ast_pointer(LibZ3.ast_vector_get(Context, vec, i))
+      end
+      LibZ3.ast_vector_dec_ref(Context, vec)
+      result
     end
   end
 end

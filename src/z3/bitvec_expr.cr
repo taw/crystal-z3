@@ -115,6 +115,78 @@ module Z3
       BoolExpr.new API.mk_bvuge(self, sort[other])
     end
 
+    def add_no_overflow?(other)
+      raise Z3::Exception.new("Use #signed_add_no_overflow? or #unsigned_add_no_overflow? for Bitvec, not #add_no_overflow?")
+    end
+
+    def signed_add_no_overflow?(other)
+      BoolExpr.new API.mk_bvadd_no_overflow(self, sort[other], true)
+    end
+
+    def unsigned_add_no_overflow?(other)
+      BoolExpr.new API.mk_bvadd_no_overflow(self, sort[other], false)
+    end
+
+    def add_no_underflow?(other)
+      BoolExpr.new API.mk_bvadd_no_underflow(self, sort[other])
+    end
+
+    def signed_add_no_underflow?(other)
+      BoolExpr.new API.mk_bvadd_no_underflow(self, sort[other])
+    end
+
+    def unsigned_add_no_underflow?(other)
+      raise Z3::Exception.new("Unsigned + cannot underflow")
+    end
+
+    def unsigned_neg_no_overflow?
+      raise Z3::Exception.new("There is no unsigned negation")
+    end
+
+    def signed_neg_no_overflow?
+      BoolExpr.new API.mk_bvneg_no_overflow(self)
+    end
+
+    def neg_no_overflow?
+      BoolExpr.new API.mk_bvneg_no_overflow(self)
+    end
+
+    def mul_no_overflow?(other)
+      raise Z3::Exception.new("Use #signed_mul_no_overflow? or #unsigned_mul_no_overflow? for Bitvec, not #mul_no_overflow?")
+    end
+
+    def signed_mul_no_overflow?(other)
+      BoolExpr.new API.mk_bvmul_no_overflow(self, sort[other], true)
+    end
+
+    def unsigned_mul_no_overflow?(other)
+      BoolExpr.new API.mk_bvmul_no_overflow(self, sort[other], false)
+    end
+
+    def mul_no_underflow?(other)
+      BoolExpr.new API.mk_bvmul_no_underflow(self, sort[other])
+    end
+
+    def signed_mul_no_underflow?(other)
+      BoolExpr.new API.mk_bvmul_no_underflow(self, sort[other])
+    end
+
+    def unsigned_mul_no_underflow?(other)
+      raise Z3::Exception.new("Unsigned * cannot underflow")
+    end
+
+    def div_no_overflow?(other)
+      BoolExpr.new API.mk_bvsdiv_no_overflow(self, sort[other])
+    end
+
+    def signed_div_no_overflow?(other)
+      BoolExpr.new API.mk_bvsdiv_no_overflow(self, sort[other])
+    end
+
+    def unsigned_div_no_overflow?(other)
+      raise Z3::Exception.new("Unsigned / cannot overflow")
+    end
+
     def >>(other)
       raise Z3::Exception.new("Use #signed_rshift or #unsigned_rshift for Bitvec, not >>")
     end
@@ -202,6 +274,10 @@ module Z3
       s = simplify
       return API.get_numeral_string(s).to_i if s.const?
       raise Z3::Exception.new("Expr #{to_s} is not constant")
+    end
+
+    def to_int(signed = false)
+      IntExpr.new API.mk_bv2int(self, signed)
     end
 
     def inspect(io)

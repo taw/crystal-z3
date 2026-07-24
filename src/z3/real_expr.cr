@@ -55,6 +55,10 @@ module Z3
       RealExpr.new API.mk_unary_minus(self)
     end
 
+    def to_int
+      IntExpr.new API.mk_real2int(self)
+    end
+
     def simplify
       RealExpr.new API.simplify(self)
     end
@@ -72,11 +76,25 @@ module Z3
       end
     end
 
-    # def to_rat
-    # end
+    def to_r : BigRational
+      return parse_rational(API.get_numeral_string(self)) if const?
+      s = simplify
+      return parse_rational(API.get_numeral_string(s)) if s.const?
+      raise Z3::Exception.new("Expr #{to_s} is not constant")
+    end
 
-    # def to_f
-    # end
+    def to_f : Float64
+      to_r.to_f
+    end
+
+    private def parse_rational(str)
+      if str.includes?("/")
+        num, den = str.split("/", 2)
+        BigRational.new(BigInt.new(num), BigInt.new(den))
+      else
+        BigRational.new(BigInt.new(str))
+      end
+    end
 
     def inspect(io)
       to_s(io)

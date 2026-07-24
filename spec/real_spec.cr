@@ -81,4 +81,24 @@ describe Z3::RealExpr do
     (Z3.real(10) / Z3.real(3)).simplify.to_s.should eq("10/3")
     (Z3.real(-10) / Z3.real(3)).simplify.to_s.should eq("-10/3")
   end
+
+  it "#to_int (floor toward -infinity)" do
+    i = Z3.int("i")
+    [a == 3.7, i == a.to_int].should have_solution({i => 3})
+    [a == -3.2, i == a.to_int].should have_solution({i => -4})
+  end
+
+  it "#to_r" do
+    Z3.real(7).to_r.should eq(BigRational.new(7))
+    Z3.real(-7).to_r.should eq(BigRational.new(-7))
+    (Z3.real(10) / Z3.real(3)).to_r.should eq(BigRational.new(10, 3))
+    (Z3.real(7) / Z3.real(2)).to_r.should eq(BigRational.new(7, 2))
+    expect_raises(Z3::Exception) { a.to_r }
+  end
+
+  it "#to_f" do
+    Z3.real(7).to_f.should eq(7.0)
+    (Z3.real(7) / Z3.real(2)).to_f.should eq(3.5)
+    (Z3.real(10) / Z3.real(3)).to_f.should be_close(3.3333, 0.001)
+  end
 end

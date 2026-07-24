@@ -122,6 +122,19 @@ describe Z3::IntExpr do
     expect_raises(Z3::Exception){ (a + b).to_i }
   end
 
+  it "#to_real" do
+    r = Z3.real("r")
+    [a == 5, r == a.to_real].should have_solution({r => 5})
+    [a == 5, r == a.to_real / 2].should have_solution({r => "5/2"})
+  end
+
+  it "#to_bitvec" do
+    v = Z3.bitvec("v", 8)
+    [a == 5, v == a.to_bitvec(8)].should have_solution({v => 5})
+    [a == -1, v == a.to_bitvec(8)].should have_solution({v => 255})
+    a.to_bitvec(8).size.should eq(8)
+  end
+
   it "Z3.distinct" do
     [
       2 >= a,
