@@ -37,16 +37,16 @@ describe Z3 do
 
   it "Z3.add / Z3.mul (Real)" do
     a = Z3.real("a")
-    [a == Z3.add([Z3.real(1), Z3.real(2), Z3.real(3)])].should have_solution({a => 6})
-    [a == Z3.mul([Z3.real(2), Z3.real(3), Z3.real(4)])].should have_solution({a => 24})
-    [a == Z3.add([] of Z3::RealExpr)].should have_solution({a => 0})
-    [a == Z3.mul([] of Z3::RealExpr)].should have_solution({a => 1})
+    [a == Z3.add([Z3.real(1), Z3.real(2), Z3.real(3)])].should have_solution(a == 6)
+    [a == Z3.mul([Z3.real(2), Z3.real(3), Z3.real(4)])].should have_solution(a == 24)
+    [a == Z3.add([] of Z3::RealExpr)].should have_solution(a == 0)
+    [a == Z3.mul([] of Z3::RealExpr)].should have_solution(a == 1)
   end
 
   it "Z3.and / Z3.or (Bitvec)" do
     a = Z3.bitvec("a", 8)
     bv8 = Z3::BitvecSort.new(8)
-    [a == Z3.and([bv8[0b1100], bv8[0b1010]])].should have_solution({a => 0b1000})
-    [a == Z3.or([bv8[0b1100], bv8[0b1010]])].should have_solution({a => 0b1110})
+    [a == Z3.and([bv8[0b1100], bv8[0b1010]])].should have_solution(a == 0b1000)
+    [a == Z3.or([bv8[0b1100], bv8[0b1010]])].should have_solution(a == 0b1110)
   end
 end

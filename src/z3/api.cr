@@ -15,6 +15,7 @@ module Z3
       get_bool_value
       get_range
       is_algebraic_number
+      is_eq_ast
       mk_abs
       mk_bit2bool
       mk_bv2int
@@ -182,6 +183,19 @@ module Z3
       else
         raise "Unsupported sort kind #{sort_kind}"
       end
+    end
+
+    # The arguments of an application, so a term like `a == 2` can be taken apart.
+    # Anything which isn't an application has no arguments.
+    # TODO: this becomes much less ad hoc once we have a real printer
+    def app_args(ast)
+      result = [] of AnyExpr
+      return result unless get_ast_kind(ast) == LibZ3::AstKind::App
+      app = LibZ3.to_app(Context, ast)
+      LibZ3.get_app_num_args(Context, app).times do |i|
+        result << new_from_ast_pointer(LibZ3.get_app_arg(Context, app, i))
+      end
+      result
     end
 
     def get_decl_name(decl)

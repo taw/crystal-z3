@@ -170,6 +170,14 @@ module Z3
       to_s(io)
     end
 
+    # Whether this is the same term as `other`. Z3 hash-conses its expressions, so
+    # this is structural equality - `Z3.int("a") + 1` built twice is one term. It is
+    # a named method rather than `==` because `==` builds a Z3 expression instead of
+    # answering a Crystal Bool - see the Limitations section of the README.
+    def same_term?(other : AnyExpr)
+      API.is_eq_ast(self, other)
+    end
+
     def to_unsafe
       @expr
     end

@@ -1,6 +1,7 @@
 @[Link("z3")]
 lib LibZ3
   alias CString = UInt8*
+  type App = Void*
   type Ast = Void*
   type AstVector = Void*
   type Config = Void*
@@ -44,6 +45,8 @@ lib LibZ3
   fun ast_vector_size = Z3_ast_vector_size(ctx : Context, v : AstVector) : UInt32
   fun get_algebraic_number_lower = Z3_get_algebraic_number_lower(ctx : Context, ast : Ast, precision : UInt32) : Ast
   fun get_algebraic_number_upper = Z3_get_algebraic_number_upper(ctx : Context, ast : Ast, precision : UInt32) : Ast
+  fun get_app_arg = Z3_get_app_arg(ctx : Context, app : App, i : UInt32) : Ast
+  fun get_app_num_args = Z3_get_app_num_args(ctx : Context, app : App) : UInt32
   fun get_ast_kind = Z3_get_ast_kind(ctx : Context, ast : Ast) : AstKind
   fun get_bool_value = Z3_get_bool_value(ctx : Context, ast : Ast) : LBool
   fun get_bv_sort_size = Z3_get_bv_sort_size(ctx : Context, sort : Sort) : UInt32
@@ -55,6 +58,7 @@ lib LibZ3
   fun get_symbol_string = Z3_get_symbol_string(ctx : Context, sym : Symbol) : CString
   fun get_version = Z3_get_version(v0 : UInt32*, v1 : UInt32*, v2 : UInt32*, v3 : UInt32*) : Void
   fun is_algebraic_number = Z3_is_algebraic_number(ctx : Context, ast : Ast) : Bool
+  fun is_eq_ast = Z3_is_eq_ast(ctx : Context, a : Ast, b : Ast) : Bool
   fun mk_abs = Z3_mk_abs(ctx : Context, a : Ast) : Ast
   fun mk_add = Z3_mk_add(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_and = Z3_mk_and(ctx : Context, count : UInt32, asts : Ast*) : Ast
@@ -174,4 +178,5 @@ lib LibZ3
   fun stats_is_double = Z3_stats_is_double(ctx : Context, stats : Stats, i : UInt32) : Bool
   fun stats_is_uint = Z3_stats_is_uint(ctx : Context, stats : Stats, i : UInt32) : Bool
   fun stats_size = Z3_stats_size(ctx : Context, stats : Stats) : UInt32
+  fun to_app = Z3_to_app(ctx : Context, ast : Ast) : App
 end
