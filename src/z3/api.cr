@@ -119,6 +119,20 @@ module Z3
       end
     {% end %}
 
+    # The cardinality and pseudo-boolean constraints take a count and a bound in
+    # addition to the asts, so they don't fit either of the loops above
+    {% for name in %w[mk_atleast mk_atmost] %}
+      def {{name.id}}(asts, k : UInt32)
+        LibZ3.{{name.id}}(Context, asts.size, asts.map(&.to_unsafe), k)
+      end
+    {% end %}
+
+    {% for name in %w[mk_pbeq mk_pbge mk_pble] %}
+      def {{name.id}}(asts, coeffs : Array(Int32), k : Int32)
+        LibZ3.{{name.id}}(Context, asts.size, asts.map(&.to_unsafe), coeffs, k)
+      end
+    {% end %}
+
     def mk_numeral(num : Int | BigRational | Float, sort)
       LibZ3.mk_numeral(Context, num.to_s, sort)
     end

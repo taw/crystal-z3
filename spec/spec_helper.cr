@@ -36,8 +36,32 @@ class SolutionExpectation(T)
   end
 end
 
+class NoSolutionExpectation
+  def match(asts)
+    !setup_solver(asts).satisfiable?
+  end
+
+  def failure_message(asts)
+    "Expected #{asts.inspect} to have no solution, but one was found:\n#{setup_solver(asts).model}"
+  end
+
+  def negative_failure_message(asts)
+    "Expected #{asts.inspect} to have a solution, but none was found"
+  end
+
+  private def setup_solver(asts)
+    solver = Z3::Solver.new
+    asts.each { |ast| solver.assert(ast) }
+    solver
+  end
+end
+
 module Spec::Expectations
   def have_solution(solution)
     SolutionExpectation.new solution.transform_values(&.to_s)
+  end
+
+  def have_no_solution
+    NoSolutionExpectation.new
   end
 end

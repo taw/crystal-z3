@@ -58,6 +58,8 @@ lib LibZ3
   fun mk_abs = Z3_mk_abs(ctx : Context, a : Ast) : Ast
   fun mk_add = Z3_mk_add(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_and = Z3_mk_and(ctx : Context, count : UInt32, asts : Ast*) : Ast
+  fun mk_atleast = Z3_mk_atleast(ctx : Context, count : UInt32, asts : Ast*, k : UInt32) : Ast
+  fun mk_atmost = Z3_mk_atmost(ctx : Context, count : UInt32, asts : Ast*, k : UInt32) : Ast
   fun mk_bit2bool = Z3_mk_bit2bool(ctx : Context, i : UInt32, a : Ast) : Ast
   fun mk_bool_sort = Z3_mk_bool_sort(ctx : Context) : Sort
   fun mk_bv2int = Z3_mk_bv2int(ctx : Context, a : Ast, signed : Bool) : Ast
@@ -127,6 +129,9 @@ lib LibZ3
   fun mk_not = Z3_mk_not(ctx : Context, a : Ast) : Ast
   fun mk_numeral = Z3_mk_numeral(ctx : Context, s : CString, sort : Sort) : Ast
   fun mk_or = Z3_mk_or(ctx : Context, count : UInt32, asts : Ast*) : Ast
+  fun mk_pbeq = Z3_mk_pbeq(ctx : Context, count : UInt32, asts : Ast*, coeffs : Int32*, k : Int32) : Ast
+  fun mk_pbge = Z3_mk_pbge(ctx : Context, count : UInt32, asts : Ast*, coeffs : Int32*, k : Int32) : Ast
+  fun mk_pble = Z3_mk_pble(ctx : Context, count : UInt32, asts : Ast*, coeffs : Int32*, k : Int32) : Ast
   fun mk_power = Z3_mk_power(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_real2int = Z3_mk_real2int(ctx : Context, a : Ast) : Ast
   fun mk_real_sort = Z3_mk_real_sort(ctx : Context) : Sort

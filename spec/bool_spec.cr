@@ -142,6 +142,77 @@ describe Z3::BoolExpr do
     [a == Z3.or([true, false, b]), b == true].should have_solution({a => true})
   end
 
+  it "Z3.at_most" do
+    [a, b, c, Z3.at_most([a, b, c], 2)].should have_no_solution
+    [a, b, Z3.at_most([a, b, c], 2)].should have_solution({c => false})
+    [a, b, c, Z3.at_most([a, b, c], 0)].should have_no_solution
+    [a, b, c, Z3.at_most([a, b, c], 3)].should have_solution({a => true, b => true, c => true})
+  end
+
+  it "Z3.at_least" do
+    [~a, ~b, ~c, Z3.at_least([a, b, c], 1)].should have_no_solution
+    [~a, Z3.at_least([a, b, c], 2)].should have_solution({b => true, c => true})
+    [~a, ~b, ~c, Z3.at_least([a, b, c], 0)].should have_solution({a => false, b => false, c => false})
+  end
+
+  it "Z3.exactly" do
+    [~a, Z3.exactly([a, b, c], 2)].should have_solution({b => true, c => true})
+    [a, b, c, Z3.exactly([a, b, c], 2)].should have_no_solution
+    [~a, ~b, ~c, Z3.exactly([a, b, c], 1)].should have_no_solution
+    [a, b, c, Z3.exactly([a, b, c], 3)].should have_solution({a => true, b => true, c => true})
+  end
+
+  it "cardinality constraints reject bad bounds" do
+    expect_raises(Z3::Exception) { Z3.at_most([a, b], -1) }
+    expect_raises(Z3::Exception) { Z3.at_least([] of Z3::BoolExpr, 1) }
+    expect_raises(Z3::Exception) { Z3.exactly([] of Z3::BoolExpr, 0) }
+    expect_raises(Z3::Exception) { Z3.at_most([] of Tuple(Z3::BoolExpr, Int32), 0) }
+  end
+
+  it "Z3.at_most with weights" do
+    [a, c, Z3.at_most([{a, 3}, {b, 2}, {c, 5}], 7)].should have_no_solution
+    [a, b, Z3.at_most([{a, 3}, {b, 2}, {c, 5}], 7)].should have_solution({c => false})
+    [a, b, c, Z3.at_most([{a, 3}, {b, 2}, {c, 5}], 10)].should have_solution({a => true, b => true, c => true})
+  end
+
+  it "Z3.at_least with weights" do
+    [~c, Z3.at_least([{a, 3}, {b, 2}, {c, 5}], 5)].should have_solution({a => true, b => true})
+    [~a, ~b, Z3.at_least([{a, 3}, {b, 2}, {c, 5}], 6)].should have_no_solution
+  end
+
+  # A weighted total of 5 is reachable two ways here, a+b or c on its own, and Z3 is
+  # free to return either - so each way is pinned down to a single solution
+  it "Z3.exactly with weights" do
+    [~c, Z3.exactly([{a, 3}, {b, 2}, {c, 5}], 5)].should have_solution({a => true, b => true})
+    [c, Z3.exactly([{a, 3}, {b, 2}, {c, 5}], 5)].should have_solution({a => false, b => false})
+    [~a, ~b, Z3.exactly([{a, 3}, {b, 2}, {c, 5}], 4)].should have_no_solution
+  end
+
+  # A count is between 0 and n, so a negative bound on one is a mistake. A weighted
+  # total isn't, so the same bound has to be allowed there.
+  it "weighted constraints allow negative weights and bounds" do
+    [b, Z3.at_most([{a, -3}, {b, 2}], 0)].should have_solution({a => true})
+    [~b, Z3.at_most([{a, -3}, {b, 2}], -1)].should have_solution({a => true, b => false})
+    [~a, Z3.at_most([{a, -3}, {b, 2}], -1)].should have_no_solution
+    [~b, Z3.at_least([{a, 1}, {b, 0}], 1)].should have_solution({a => true, b => false})
+  end
+
+  # All weights 1 isn't merely equivalent to the list form, it's the same AST -
+  # and Z3 hash-conses, so the pointers are equal
+  it "unit weights build the unweighted term" do
+    Z3.at_most([{a, 1}, {b, 1}, {c, 1}], 2).to_unsafe.should eq(Z3.at_most([a, b, c], 2).to_unsafe)
+    Z3.at_least([{a, 1}, {b, 1}, {c, 1}], 2).to_unsafe.should eq(Z3.at_least([a, b, c], 2).to_unsafe)
+    Z3.exactly([{a, 1}, {b, 1}, {c, 1}], 2).to_unsafe.should eq(Z3.exactly([a, b, c], 2).to_unsafe)
+  end
+
+  # The bound and the weights are decl parameters rather than arguments, so they have
+  # to be printed explicitly or `at_most(.., 1)` and `at_most(.., 2)` are one string
+  it "cardinality constraints print their bound and weights" do
+    Z3.at_most([a, b], 1).to_s.should_not eq(Z3.at_most([a, b], 2).to_s)
+    Z3.at_most([{a, 3}, {b, 2}], 4).to_s.should_not eq(Z3.at_most([{a, 3}, {b, 2}], 5).to_s)
+    Z3.at_most([{a, 3}, {b, 2}], 4).to_s.should_not eq(Z3.at_most([{a, 2}, {b, 3}], 4).to_s)
+  end
+
   it "Z3.and" do
     [a == Z3.and([] of Z3::BoolExpr)].should have_solution({a => true})
     [a == Z3.and([true, false])].should have_solution({a => false})
