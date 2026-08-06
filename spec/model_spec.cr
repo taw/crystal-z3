@@ -56,8 +56,8 @@ describe Z3::Model do
     model = solver.model
     model.eval(e).to_s.should eq("42")
     model.eval(f).to_s.should eq("f")
-    model.eval(e).to_i.should eq(42)
-    expect_raises(Z3::Exception) { model.eval(f).to_i }
+    model.eval(e).unsigned_value.should eq(42)
+    expect_raises(Z3::Exception) { model.eval(f).unsigned_value }
   end
 
   it "[] bit vector" do
@@ -66,8 +66,8 @@ describe Z3::Model do
     model = solver.model
     model[e].to_s.should eq("42")
     model[f].to_s.should eq("0")
-    model[e].to_i.should eq(42)
-    model[f].to_i.should eq(0)
+    model[e].unsigned_value.should eq(42)
+    model[f].unsigned_value.should eq(0)
   end
 
   it "eval real" do

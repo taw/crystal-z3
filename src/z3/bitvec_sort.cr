@@ -1,6 +1,7 @@
 module Z3
   class BitvecSort
     def initialize(@size : UInt32)
+      raise Z3::Exception.new("Bitvec width must be a positive Integer") unless @size >= 1
       @sort = LibZ3.mk_bv_sort(API::Context, @size)
     end
 

@@ -42,7 +42,10 @@ lib LibZ3
   fun ast_vector_get = Z3_ast_vector_get(ctx : Context, v : AstVector, i : UInt32) : Ast
   fun ast_vector_inc_ref = Z3_ast_vector_inc_ref(ctx : Context, v : AstVector) : Void
   fun ast_vector_size = Z3_ast_vector_size(ctx : Context, v : AstVector) : UInt32
+  fun get_algebraic_number_lower = Z3_get_algebraic_number_lower(ctx : Context, ast : Ast, precision : UInt32) : Ast
+  fun get_algebraic_number_upper = Z3_get_algebraic_number_upper(ctx : Context, ast : Ast, precision : UInt32) : Ast
   fun get_ast_kind = Z3_get_ast_kind(ctx : Context, ast : Ast) : AstKind
+  fun get_bool_value = Z3_get_bool_value(ctx : Context, ast : Ast) : LBool
   fun get_bv_sort_size = Z3_get_bv_sort_size(ctx : Context, sort : Sort) : UInt32
   fun get_decl_name = Z3_get_decl_name(ctx : Context, decl : FuncDecl) : Symbol
   fun get_numeral_string = Z3_get_numeral_string(ctx : Context, ast : Ast) : CString
@@ -51,8 +54,11 @@ lib LibZ3
   fun get_sort_kind = Z3_get_sort_kind(ctx : Context, sort : Sort) : SortKind
   fun get_symbol_string = Z3_get_symbol_string(ctx : Context, sym : Symbol) : CString
   fun get_version = Z3_get_version(v0 : UInt32*, v1 : UInt32*, v2 : UInt32*, v3 : UInt32*) : Void
+  fun is_algebraic_number = Z3_is_algebraic_number(ctx : Context, ast : Ast) : Bool
+  fun mk_abs = Z3_mk_abs(ctx : Context, a : Ast) : Ast
   fun mk_add = Z3_mk_add(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_and = Z3_mk_and(ctx : Context, count : UInt32, asts : Ast*) : Ast
+  fun mk_bit2bool = Z3_mk_bit2bool(ctx : Context, i : UInt32, a : Ast) : Ast
   fun mk_bool_sort = Z3_mk_bool_sort(ctx : Context) : Sort
   fun mk_bv2int = Z3_mk_bv2int(ctx : Context, a : Ast, signed : Bool) : Ast
   fun mk_bv_sort = Z3_mk_bv_sort(ctx : Context, size : UInt32) : Sort
@@ -71,6 +77,8 @@ lib LibZ3
   fun mk_bvnor = Z3_mk_bvnor(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvnot = Z3_mk_bvnot(ctx : Context, a : Ast) : Ast
   fun mk_bvor = Z3_mk_bvor(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_bvredand = Z3_mk_bvredand(ctx : Context, a : Ast) : Ast
+  fun mk_bvredor = Z3_mk_bvredor(ctx : Context, a : Ast) : Ast
   fun mk_bvsdiv = Z3_mk_bvsdiv(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvsdiv_no_overflow = Z3_mk_bvsdiv_no_overflow(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvsge = Z3_mk_bvsge(ctx : Context, a : Ast, b : Ast) : Ast
@@ -81,6 +89,8 @@ lib LibZ3
   fun mk_bvsmod = Z3_mk_bvsmod(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvsrem = Z3_mk_bvsrem(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvsub = Z3_mk_bvsub(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_bvsub_no_overflow = Z3_mk_bvsub_no_overflow(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_bvsub_no_underflow = Z3_mk_bvsub_no_underflow(ctx : Context, a : Ast, b : Ast, signed : Bool) : Ast
   fun mk_bvudiv = Z3_mk_bvudiv(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvuge = Z3_mk_bvuge(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvugt = Z3_mk_bvugt(ctx : Context, a : Ast, b : Ast) : Ast
@@ -95,7 +105,10 @@ lib LibZ3
   fun mk_context = Z3_mk_context(cfg : Config) : Context
   fun mk_distinct = Z3_mk_distinct(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_div = Z3_mk_div(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_divides = Z3_mk_divides(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_eq = Z3_mk_eq(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_ext_rotate_left = Z3_mk_ext_rotate_left(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_ext_rotate_right = Z3_mk_ext_rotate_right(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_extract = Z3_mk_extract(ctx : Context, high : UInt32, low : UInt32, a : Ast) : Ast
   fun mk_false = Z3_mk_false(ctx : Context) : Ast
   fun mk_ge = Z3_mk_ge(ctx : Context, a : Ast, b : Ast) : Ast
@@ -105,6 +118,7 @@ lib LibZ3
   fun mk_int2bv = Z3_mk_int2bv(ctx : Context, n : UInt32, a : Ast) : Ast
   fun mk_int2real = Z3_mk_int2real(ctx : Context, a : Ast) : Ast
   fun mk_int_sort = Z3_mk_int_sort(ctx : Context) : Sort
+  fun mk_is_int = Z3_mk_is_int(ctx : Context, a : Ast) : Ast
   fun mk_ite = Z3_mk_ite(ctx : Context, a : Ast, b : Ast, c : Ast) : Ast
   fun mk_le = Z3_mk_le(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_lt = Z3_mk_lt(ctx : Context, a : Ast, b : Ast) : Ast
@@ -117,6 +131,7 @@ lib LibZ3
   fun mk_real2int = Z3_mk_real2int(ctx : Context, a : Ast) : Ast
   fun mk_real_sort = Z3_mk_real_sort(ctx : Context) : Sort
   fun mk_rem = Z3_mk_rem(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_repeat = Z3_mk_repeat(ctx : Context, n : UInt32, a : Ast) : Ast
   fun mk_rotate_left = Z3_mk_rotate_left(ctx : Context, n : UInt32, a : Ast) : Ast
   fun mk_rotate_right = Z3_mk_rotate_right(ctx : Context, n : UInt32, a : Ast) : Ast
   fun mk_sign_ext = Z3_mk_sign_ext(ctx : Context, n : UInt32, a : Ast) : Ast

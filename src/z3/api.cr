@@ -9,8 +9,14 @@ module Z3
     Context = LibZ3.mk_context(LibZ3.mk_config)
 
     {% for name in %w[
+      get_algebraic_number_lower
+      get_algebraic_number_upper
       get_ast_kind
+      get_bool_value
       get_range
+      is_algebraic_number
+      mk_abs
+      mk_bit2bool
       mk_bv2int
       mk_bvadd
       mk_bvadd_no_overflow
@@ -27,6 +33,8 @@ module Z3
       mk_bvnor
       mk_bvnot
       mk_bvor
+      mk_bvredand
+      mk_bvredor
       mk_bvsdiv
       mk_bvsdiv_no_overflow
       mk_bvsge
@@ -37,6 +45,8 @@ module Z3
       mk_bvsmod
       mk_bvsrem
       mk_bvsub
+      mk_bvsub_no_overflow
+      mk_bvsub_no_underflow
       mk_bvudiv
       mk_bvuge
       mk_bvugt
@@ -47,7 +57,10 @@ module Z3
       mk_bvxor
       mk_concat
       mk_div
+      mk_divides
       mk_eq
+      mk_ext_rotate_left
+      mk_ext_rotate_right
       mk_extract
       mk_false
       mk_ge
@@ -56,6 +69,7 @@ module Z3
       mk_implies
       mk_int2bv
       mk_int2real
+      mk_is_int
       mk_ite
       mk_le
       mk_lt
@@ -64,6 +78,7 @@ module Z3
       mk_power
       mk_real2int
       mk_rem
+      mk_repeat
       mk_rotate_left
       mk_rotate_right
       mk_sign_ext

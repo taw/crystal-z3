@@ -43,6 +43,24 @@ module Z3
       BoolExpr.new API.mk_ite(self, BoolSort[a], BoolSort[b])
     end
 
+    def ite(a : RealExpr, b : (RealExpr | Int | Float64 | BigRational)) : RealExpr
+      RealExpr.new API.mk_ite(self, a, RealSort[b])
+    end
+
+    def ite(a : (Int | Float64 | BigRational), b : RealExpr) : RealExpr
+      RealExpr.new API.mk_ite(self, RealSort[a], b)
+    end
+
+    # Both branches have to be the same sort, and a Bitvec's sort includes its size,
+    # so the sizes have to match too - `sort[]` is what says so
+    def ite(a : BitvecExpr, b : (BitvecExpr | Int)) : BitvecExpr
+      BitvecExpr.new API.mk_ite(self, a, a.sort[b]), a.sort
+    end
+
+    def ite(a : Int, b : BitvecExpr) : BitvecExpr
+      BitvecExpr.new API.mk_ite(self, b.sort[a], b), b.sort
+    end
+
     def ~
       BoolExpr.new API.mk_not(self)
     end
@@ -62,14 +80,20 @@ module Z3
     end
 
     def const?
-      API.get_ast_kind(self) == LibZ3::AstKind::App && API.ast_to_string(self).in?(["true", "false"])
+      API.get_bool_value(self) != LibZ3::LBool::Undefined
     end
 
-    def to_b
-      return API.ast_to_string(self) == "true" if const?
-      s = simplify
-      return API.ast_to_string(s) == "true" if s.const?
-      raise Z3::Exception.new("Expr #{to_s} is not constant")
+    # Every sort which can hand back a Crystal object spells it #value
+    def value : Bool
+      v = API.get_bool_value(self)
+      v = API.get_bool_value(simplify) if v == LibZ3::LBool::Undefined
+      # Anything else is neither true nor false, so it has no Crystal value
+      raise Z3::Exception.new("Can't convert expression #{self} into Bool") if v == LibZ3::LBool::Undefined
+      v == LibZ3::LBool::True
+    end
+
+    def to_b : Bool
+      value
     end
 
     def to_unsafe

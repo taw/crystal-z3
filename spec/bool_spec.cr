@@ -70,6 +70,24 @@ describe Z3::BoolExpr do
     [a == false, b == a.ite(false, true)].should have_solution({b => true})
   end
 
+  it "if then else on Real" do
+    r = Z3.real("r")
+    [a ==  true, r == a.ite(Z3::RealSort[1] / 2, Z3::RealSort[3])].should have_solution({r => "1/2"})
+    [a == false, r == a.ite(Z3::RealSort[1] / 2, Z3::RealSort[3])].should have_solution({r => 3})
+    [a ==  true, r == a.ite(2, Z3::RealSort[3])].should have_solution({r => 2})
+    [a == false, r == a.ite(Z3::RealSort[2], 3.5)].should have_solution({r => "7/2"})
+  end
+
+  it "if then else on Bitvec" do
+    v = Z3.bitvec("v", 8)
+    w = Z3.bitvec("w", 8)
+    [a ==  true, v == a.ite(w, 3), w == 200].should have_solution({v => 200})
+    [a == false, v == a.ite(w, 3), w == 200].should have_solution({v => 3})
+    [a ==  true, v == a.ite(2, w), w == 200].should have_solution({v => 2})
+    # Both branches have to be the same size
+    expect_raises(Z3::Exception) { a.ite(v, Z3.bitvec("z", 12)) }
+  end
+
   it "simplify" do
     t = Z3::BoolSort[true]
     f = Z3::BoolSort[false]
@@ -94,6 +112,17 @@ describe Z3::BoolExpr do
     (Z3::BoolSort[true] | Z3::BoolSort[false]).const?.should be_false
     a.const?.should be_false
     (a | b).const?.should be_false
+  end
+
+  # Every sort which can hand back a Crystal object spells it #value, and on Bool
+  # #to_b is the same method
+  it "value" do
+    Z3::BoolSort[true].value.should eq(true)
+    Z3::BoolSort[false].value.should eq(false)
+    (Z3::BoolSort[true] | Z3::BoolSort[false]).value.should eq(true)
+    (Z3::BoolSort[true] & Z3::BoolSort[false]).value.should eq(false)
+    expect_raises(Z3::Exception) { a.value }
+    expect_raises(Z3::Exception) { (a | b).value }
   end
 
   it "to_b" do

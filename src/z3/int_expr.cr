@@ -55,6 +55,12 @@ module Z3
       IntExpr.new API.mk_mod(self, sort[other])
     end
 
+    # It doesn't match Crystal on a negative right side, but nobody does modulo a
+    # negative anyway, and the Python Z3 API does the same thing
+    def %(other)
+      mod(other)
+    end
+
     def **(other)
       IntExpr.new API.mk_power(self, sort[other])
     end
@@ -63,12 +69,45 @@ module Z3
       IntExpr.new API.mk_unary_minus(self)
     end
 
+    def zero?
+      self == 0
+    end
+
+    def nonzero?
+      self != 0
+    end
+
+    def positive?
+      self > 0
+    end
+
+    def negative?
+      self < 0
+    end
+
+    def abs
+      IntExpr.new API.mk_abs(self)
+    end
+
+    # Z3 spells this the other way round, as "other divides self"
+    def divisible_by?(other)
+      BoolExpr.new API.mk_divides(sort[other], self)
+    end
+
     def to_real
       RealExpr.new API.mk_int2real(self)
     end
 
-    def to_bitvec(n : Int)
+    # Takes the low `n` bits, so it wraps rather than failing on values which don't
+    # fit - `Z3.int("a").to_bv(8)` of 256 is 0. Which Integer comes back out depends
+    # on how you read it again: BitvecExpr#signed_value or #unsigned_value.
+    def to_bv(n : Int)
+      raise Z3::Exception.new("Bitvec width must be a positive Integer") unless n >= 1
       BitvecExpr.new API.mk_int2bv(n.to_u32, self), BitvecSort.new(n.to_u32)
+    end
+
+    def to_bitvec(n : Int)
+      to_bv(n)
     end
 
     def simplify
@@ -88,11 +127,26 @@ module Z3
       end
     end
 
-    def to_i
-      return API.get_numeral_string(self).to_i if const?
+    # Every sort which can hand back a Crystal object spells it #value. Z3 Ints are
+    # unbounded, so this is a BigInt - #to_i is the Int32 one, as everywhere else in
+    # Crystal.
+    def value : BigInt
+      return BigInt.new(API.get_numeral_string(self)) if const?
       s = simplify
-      return API.get_numeral_string(s).to_i if s.const?
-      raise Z3::Exception.new("Expr #{to_s} is not constant")
+      return BigInt.new(API.get_numeral_string(s)) if s.const?
+      raise Z3::Exception.new("Can't convert expression #{self} into Integer")
+    end
+
+    def to_i : Int32
+      value.to_i
+    end
+
+    def to_i64 : Int64
+      value.to_i64
+    end
+
+    def to_big_i : BigInt
+      value
     end
 
     def inspect(io)
