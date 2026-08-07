@@ -20,20 +20,20 @@ module Z3
     BoolExpr.new API.mk_distinct(args)
   end
 
-  def Z3.int(name)
-    Z3::IntSort[name]
+  def Z3.int(name : String)
+    Z3::IntSort.var(name)
   end
 
-  def Z3.bool(name)
-    Z3::BoolSort[name]
+  def Z3.bool(name : String)
+    Z3::BoolSort.var(name)
   end
 
-  def Z3.real(name)
-    Z3::RealSort[name]
+  def Z3.real(name : String)
+    Z3::RealSort.var(name)
   end
 
-  def Z3.bitvec(name, size : UInt32)
-    Z3::BitvecSort.new(size)[name]
+  def Z3.bitvec(name : String, size : UInt32)
+    Z3::BitvecSort.new(size).var(name)
   end
 
   def Z3.version

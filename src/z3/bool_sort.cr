@@ -6,7 +6,7 @@ module Z3
       expr
     end
 
-    def self.[](name : String)
+    def self.var(name : String)
       BoolExpr.new API.mk_const(name, @@sort)
     end
 

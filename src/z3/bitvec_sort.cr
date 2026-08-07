@@ -10,7 +10,7 @@ module Z3
       expr
     end
 
-    def [](name : String)
+    def var(name : String)
       BitvecExpr.new API.mk_const(name, self), self
     end
 

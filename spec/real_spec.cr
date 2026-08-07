@@ -128,10 +128,10 @@ describe Z3::RealExpr do
   # Then you get a complex S-expression
   # We need to add some way to extract that
   it "to_s" do
-    Z3.real(7).to_s.should eq("7")
-    Z3.real(-7).to_s.should eq("-7")
-    (Z3.real(10) / Z3.real(3)).simplify.to_s.should eq("10/3")
-    (Z3.real(-10) / Z3.real(3)).simplify.to_s.should eq("-10/3")
+    Z3::RealSort[7].to_s.should eq("7")
+    Z3::RealSort[-7].to_s.should eq("-7")
+    (Z3::RealSort[10] / Z3::RealSort[3]).simplify.to_s.should eq("10/3")
+    (Z3::RealSort[-10] / Z3::RealSort[3]).simplify.to_s.should eq("-10/3")
   end
 
   # SMT-LIB's to_int rounds towards negative infinity, which is Crystal's Float#floor
@@ -148,19 +148,19 @@ describe Z3::RealExpr do
 
   # There is no #value on Real - see #to_r and #to_f for why
   it "#to_r is exact for rationals" do
-    Z3.real(7).to_r.should eq(BigRational.new(7))
-    Z3.real(-7).to_r.should eq(BigRational.new(-7))
-    (Z3.real(10) / Z3.real(3)).to_r.should eq(BigRational.new(10, 3))
-    (Z3.real(7) / Z3.real(2)).to_r.should eq(BigRational.new(7, 2))
+    Z3::RealSort[7].to_r.should eq(BigRational.new(7))
+    Z3::RealSort[-7].to_r.should eq(BigRational.new(-7))
+    (Z3::RealSort[10] / Z3::RealSort[3]).to_r.should eq(BigRational.new(10, 3))
+    (Z3::RealSort[7] / Z3::RealSort[2]).to_r.should eq(BigRational.new(7, 2))
     Z3::RealSort[2.5].to_r.should eq(BigRational.new(5, 2))
     Z3::RealSort[BigRational.new(1, 3)].to_r.should eq(BigRational.new(1, 3))
     expect_raises(Z3::Exception) { a.to_r }
   end
 
   it "#to_f" do
-    Z3.real(7).to_f.should eq(7.0)
-    (Z3.real(7) / Z3.real(2)).to_f.should eq(3.5)
-    (Z3.real(10) / Z3.real(3)).to_f.should be_close(3.3333, 0.001)
+    Z3::RealSort[7].to_f.should eq(7.0)
+    (Z3::RealSort[7] / Z3::RealSort[2]).to_f.should eq(3.5)
+    (Z3::RealSort[10] / Z3::RealSort[3]).to_f.should be_close(3.3333, 0.001)
     expect_raises(Z3::Exception) { a.to_f }
   end
 
@@ -178,7 +178,7 @@ describe Z3::RealExpr do
     it "#algebraic?" do
       root_two.algebraic?.should be_true
       Z3::RealSort[2.5].algebraic?.should be_false
-      Z3.real(7).algebraic?.should be_false
+      Z3::RealSort[7].algebraic?.should be_false
     end
 
     # The whole reason Real has no #value
