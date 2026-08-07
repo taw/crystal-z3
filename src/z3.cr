@@ -4,6 +4,19 @@ require "./z3/*"
 module Z3
   VERSION = "0.1.0"
 
+  # Any expression, regardless of sort. This is what we can recover from a raw
+  # AST pointer, since Z3 only tells us the sort kind at runtime.
+  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr | CharExpr | StringExpr | SeqExpr
+
+  # Any sort, as a value. The sorts with nothing to configure are singletons, and a
+  # Crystal class is already one of those, so they are the classes themselves - while
+  # a Bitvec or a Seq has to be instantiated with its size or its element sort.
+  #
+  # Whichever it is, every sort answers `to_unsafe` with its Z3 sort, `from_ast` with
+  # an expression of itself, and `cast` with a Crystal object converted into one. Those
+  # three are what a Seq needs, since its element sort is only known at runtime.
+  alias AnySort = BoolSort.class | IntSort.class | RealSort.class | CharSort.class | StringSort.class | BitvecSort | SeqSort
+
   def Z3.distinct(args : Array(IntExpr))
     BoolExpr.new API.mk_distinct(args)
   end
@@ -21,6 +34,14 @@ module Z3
   end
 
   def Z3.distinct(args : Array(CharExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
+  def Z3.distinct(args : Array(StringExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
+  def Z3.distinct(args : Array(SeqExpr))
     BoolExpr.new API.mk_distinct(args)
   end
 
@@ -42,6 +63,14 @@ module Z3
 
   def Z3.char(name : String)
     Z3::CharSort.var(name)
+  end
+
+  def Z3.string(name : String)
+    Z3::StringSort.var(name)
+  end
+
+  def Z3.seq(name : String, element_sort)
+    Z3::SeqSort.new(element_sort).var(name)
   end
 
   def Z3.version

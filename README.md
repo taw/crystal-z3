@@ -41,6 +41,19 @@ The [Ruby z3 gem](https://github.com/taw/z3) has no such limitation, as Ruby's `
 uses `#eql?` rather than `#==`, which leaves `==` free to build expressions. Crystal
 has no `eql?` - a single `==` serves both roles.
 
+A `Z3::SeqExpr` only knows its element sort at runtime, so everything which hands back
+an element - `xs[0]`, `#first`, `#last`, `#elements` - answers a `Z3::AnyExpr` union
+rather than the element's own class:
+
+```crystal
+xs = Z3.seq("xs", Z3::IntSort)
+xs[0].as(Z3::IntExpr) == 5   # `xs[0] == 5` does not compile
+```
+
+That's the price of `Z3::SeqSort.new(Z3::CharSort)` handing back `Z3::StringSort`, the
+way Z3 itself has only the one sort for both: a generic `SeqSort(IntSort)` could type
+its elements, but then Seq(Char) could not be turned into something else.
+
 ## Contributing
 
 1. Fork it (<https://github.com/taw/crystal-z3/fork>)

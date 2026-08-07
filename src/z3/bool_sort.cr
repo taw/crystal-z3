@@ -17,5 +17,26 @@ module Z3
         BoolExpr.new API.mk_false
       end
     end
+
+    def self.cast(value) : BoolExpr
+      case value
+      when BoolExpr, Bool
+        self[value]
+      else
+        raise Z3::Exception.new("Can't convert #{value.inspect} into #{self}")
+      end
+    end
+
+    def self.from_ast(ast : LibZ3::Ast) : BoolExpr
+      BoolExpr.new ast
+    end
+
+    def self.to_unsafe
+      @@sort
+    end
+
+    def self.to_s(io)
+      io << "Bool"
+    end
   end
 end

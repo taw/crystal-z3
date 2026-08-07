@@ -1,8 +1,4 @@
 module Z3
-  # Any expression, regardless of sort. This is what we can recover from a raw
-  # AST pointer, since Z3 only tells us the sort kind at runtime.
-  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr | CharExpr
-
   module API
     extend self
 
@@ -44,6 +40,7 @@ module Z3
       get_range
       is_algebraic_number
       is_eq_ast
+      is_string
       mk_abs
       mk_bit2bool
       mk_bv2int
@@ -104,6 +101,7 @@ module Z3
       mk_implies
       mk_int2bv
       mk_int2real
+      mk_int_to_str
       mk_is_int
       mk_ite
       mk_le
@@ -116,9 +114,29 @@ module Z3
       mk_repeat
       mk_rotate_left
       mk_rotate_right
+      mk_sbv_to_str
+      mk_seq_at
+      mk_seq_contains
+      mk_seq_empty
+      mk_seq_extract
+      mk_seq_index
+      mk_seq_last_index
+      mk_seq_length
+      mk_seq_nth
+      mk_seq_prefix
+      mk_seq_replace
+      mk_seq_replace_all
+      mk_seq_suffix
+      mk_seq_unit
       mk_sign_ext
       mk_solver
+      mk_str_le
+      mk_str_lt
+      mk_str_to_int
+      mk_string_from_code
+      mk_string_to_code
       mk_true
+      mk_ubv_to_str
       mk_unary_minus
       mk_xor
       mk_zero_ext
@@ -157,6 +175,7 @@ module Z3
       mk_distinct
       mk_mul
       mk_or
+      mk_seq_concat
       mk_sub
     ] %}
       def {{name.id}}(asts)
@@ -204,6 +223,23 @@ module Z3
       String.new checked(LibZ3.get_numeral_string(Context, ast))
     end
 
+    # A Z3 string is a sequence of code points, and these two are the only calls which
+    # pass one either way without escaping it into ASCII first
+    def mk_u32string(code_points : Array(UInt32))
+      checked LibZ3.mk_u32string(Context, code_points.size, code_points)
+    end
+
+    def get_string(ast)
+      size = checked LibZ3.get_string_length(Context, ast)
+      return "" if size == 0
+      code_points = Pointer(UInt32).malloc(size)
+      LibZ3.get_string_contents(Context, ast, size, code_points)
+      check_error
+      String.build do |io|
+        size.times { |i| io << code_points[i].to_i.chr }
+      end
+    end
+
     def model_eval(model, ast, complete)
       result = LibZ3.model_eval(Context, model, ast, complete, out result_ast)
       check_error
@@ -211,22 +247,26 @@ module Z3
       new_from_ast_pointer result_ast
     end
 
-    def new_from_ast_pointer(_ast)
-      _sort = checked LibZ3.get_sort(Context, _ast)
+    def new_from_ast_pointer(_ast) : AnyExpr
+      sort_from_pointer(checked(LibZ3.get_sort(Context, _ast))).from_ast(_ast)
+    end
+
+    def sort_from_pointer(_sort) : AnySort
       sort_kind = checked LibZ3.get_sort_kind(Context, _sort)
       case sort_kind
       when LibZ3::SortKind::Bool
-        BoolExpr.new(_ast)
+        BoolSort
       when LibZ3::SortKind::Int
-        IntExpr.new(_ast)
+        IntSort
       when LibZ3::SortKind::Real
-        RealExpr.new(_ast)
+        RealSort
       when LibZ3::SortKind::Char
-        CharExpr.new(_ast)
+        CharSort
       when LibZ3::SortKind::Bitvec
-        size = checked LibZ3.get_bv_sort_size(Context, _sort)
-        sort = BitvecSort.new(size)
-        BitvecExpr.new(_ast, sort)
+        BitvecSort.new(checked(LibZ3.get_bv_sort_size(Context, _sort)))
+      when LibZ3::SortKind::Seq
+        # Seq(Char) comes back as StringSort, which is what SeqSort.new says it is
+        SeqSort.new(sort_from_pointer(checked(LibZ3.get_seq_sort_basis(Context, _sort))))
       else
         raise "Unsupported sort kind #{sort_kind}"
       end

@@ -201,6 +201,37 @@ struct BigRational
   end
 end
 
+class String
+  def +(other : Z3::StringExpr)
+    Z3::StringSort[self] + other
+  end
+
+  def ==(other : Z3::StringExpr)
+    Z3::StringSort[self] == other
+  end
+
+  def !=(other : Z3::StringExpr)
+    Z3::StringSort[self] != other
+  end
+
+  # `str.<` and friends are lexicographic, the way String's own are
+  def >=(other : Z3::StringExpr)
+    Z3::StringSort[self] >= other
+  end
+
+  def >(other : Z3::StringExpr)
+    Z3::StringSort[self] > other
+  end
+
+  def <=(other : Z3::StringExpr)
+    Z3::StringSort[self] <= other
+  end
+
+  def <(other : Z3::StringExpr)
+    Z3::StringSort[self] < other
+  end
+end
+
 struct Char
   def ==(other : Z3::CharExpr)
     Z3::CharSort[self] == other

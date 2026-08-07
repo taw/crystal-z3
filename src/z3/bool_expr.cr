@@ -69,6 +69,24 @@ module Z3
       CharExpr.new API.mk_ite(self, CharSort[a], b)
     end
 
+    def ite(a : StringExpr, b : (StringExpr | String)) : StringExpr
+      StringExpr.new API.mk_ite(self, a, StringSort[b])
+    end
+
+    def ite(a : String, b : StringExpr) : StringExpr
+      StringExpr.new API.mk_ite(self, StringSort[a], b)
+    end
+
+    # Both branches have to be the same sort, and a Seq's sort includes its element
+    # sort, so `sort[]` is what says so
+    def ite(a : SeqExpr, b : (SeqExpr | Array)) : SeqExpr
+      SeqExpr.new API.mk_ite(self, a, a.sort.cast(b)), a.sort
+    end
+
+    def ite(a : Array, b : SeqExpr) : SeqExpr
+      SeqExpr.new API.mk_ite(self, b.sort.cast(a), b), b.sort
+    end
+
     def ~
       BoolExpr.new API.mk_not(self)
     end

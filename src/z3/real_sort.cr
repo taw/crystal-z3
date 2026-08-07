@@ -18,5 +18,28 @@ module Z3
       raise Z3::Exception.new("Can't convert non-finite float to Z3 Real") unless num.finite?
       RealExpr.new API.mk_numeral(num, @@sort)
     end
+
+    def self.cast(value) : RealExpr
+      case value
+      when RealExpr
+        value
+      when Int, BigRational, Float64
+        self[value]
+      else
+        raise Z3::Exception.new("Can't convert #{value.inspect} into #{self}")
+      end
+    end
+
+    def self.from_ast(ast : LibZ3::Ast) : RealExpr
+      RealExpr.new ast
+    end
+
+    def self.to_unsafe
+      @@sort
+    end
+
+    def self.to_s(io)
+      io << "Real"
+    end
   end
 end

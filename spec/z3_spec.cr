@@ -13,12 +13,26 @@ describe Z3 do
     Z3::RealSort.var("c").to_s.should eq("c")
     Z3::BitvecSort.new(8).var("d").to_s.should eq("d")
     Z3::CharSort.var("e").to_s.should eq("e")
+    Z3::StringSort.var("f").to_s.should eq("f")
+    Z3::SeqSort.new(Z3::IntSort).var("g").to_s.should eq("g")
 
     Z3::IntSort[42].to_s.should eq("42")
     Z3::BoolSort[true].to_s.should eq("true")
     Z3::RealSort[2.5].to_s.should eq("5/2")
     Z3::BitvecSort.new(8)[42].to_s.should eq("42")
     Z3::CharSort['a'].value.should eq('a')
+    Z3::StringSort["abc"].value.should eq("abc")
+    Z3::SeqSort.new(Z3::IntSort)[[1, 2]].to_s.should eq("(seq.++ (seq.unit 1) (seq.unit 2))")
+  end
+
+  it "Z3.distinct (String)" do
+    a = Z3.string("a")
+    b = Z3.string("b")
+    solver = Z3::Solver.new
+    solver.assert a == "x"
+    solver.assert b == "x"
+    solver.assert Z3.distinct([a, b])
+    solver.satisfiable?.should be_false
   end
 
   it "Z3.distinct (Char)" do
@@ -32,6 +46,16 @@ describe Z3 do
       solver.assert char >= 'a'
       solver.assert char <= 'b'
     end
+    solver.satisfiable?.should be_false
+  end
+
+  it "Z3.distinct (Seq)" do
+    a = Z3.seq("a", Z3::IntSort)
+    b = Z3.seq("b", Z3::IntSort)
+    solver = Z3::Solver.new
+    solver.assert a == [1, 2]
+    solver.assert b == [1, 2]
+    solver.assert Z3.distinct([a, b])
     solver.satisfiable?.should be_false
   end
 

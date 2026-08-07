@@ -96,6 +96,24 @@ describe Z3::BoolExpr do
     [a ==  true, ch1 == a.ite('x', ch2), ch2 == 'y'].should have_solution(ch1 == 'x')
   end
 
+  it "if then else on String" do
+    str1 = Z3.string("str1")
+    str2 = Z3.string("str2")
+    [a ==  true, str1 == a.ite(str2, "xx"), str2 == "yy"].should have_solution(str1 == "yy")
+    [a == false, str1 == a.ite(str2, "xx"), str2 == "yy"].should have_solution(str1 == "xx")
+    [a ==  true, str1 == a.ite("xx", str2), str2 == "yy"].should have_solution(str1 == "xx")
+  end
+
+  it "if then else on Seq" do
+    xs = Z3.seq("xs", Z3::IntSort)
+    ys = Z3.seq("ys", Z3::IntSort)
+    [a ==  true, xs == a.ite(ys, [9]), ys == [1, 2]].should have_solution(xs == [1, 2])
+    [a == false, xs == a.ite(ys, [9]), ys == [1, 2]].should have_solution(xs == [9])
+    [a ==  true, xs == a.ite([9], ys), ys == [1, 2]].should have_solution(xs == [9])
+    # Both branches have to be the same sort
+    expect_raises(Z3::Exception) { a.ite(xs, Z3.seq("zs", Z3::RealSort)) }
+  end
+
   it "simplify" do
     t = Z3::BoolSort[true]
     f = Z3::BoolSort[false]
