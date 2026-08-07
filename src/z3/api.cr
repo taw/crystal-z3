@@ -1,7 +1,7 @@
 module Z3
   # Any expression, regardless of sort. This is what we can recover from a raw
   # AST pointer, since Z3 only tells us the sort kind at runtime.
-  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr
+  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr | CharExpr
 
   module API
     extend self
@@ -84,6 +84,12 @@ module Z3
       mk_bvurem
       mk_bvxnor
       mk_bvxor
+      mk_char
+      mk_char_from_bv
+      mk_char_is_digit
+      mk_char_le
+      mk_char_to_bv
+      mk_char_to_int
       mk_concat
       mk_div
       mk_divides
@@ -215,6 +221,8 @@ module Z3
         IntExpr.new(_ast)
       when LibZ3::SortKind::Real
         RealExpr.new(_ast)
+      when LibZ3::SortKind::Char
+        CharExpr.new(_ast)
       when LibZ3::SortKind::Bitvec
         size = checked LibZ3.get_bv_sort_size(Context, _sort)
         sort = BitvecSort.new(size)

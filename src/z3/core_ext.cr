@@ -200,3 +200,29 @@ struct BigRational
     Z3::RealSort[self] < other
   end
 end
+
+struct Char
+  def ==(other : Z3::CharExpr)
+    Z3::CharSort[self] == other
+  end
+
+  def !=(other : Z3::CharExpr)
+    Z3::CharSort[self] != other
+  end
+
+  def >=(other : Z3::CharExpr)
+    Z3::CharSort[self] >= other
+  end
+
+  def >(other : Z3::CharExpr)
+    Z3::CharSort[self] > other
+  end
+
+  def <=(other : Z3::CharExpr)
+    Z3::CharSort[self] <= other
+  end
+
+  def <(other : Z3::CharExpr)
+    Z3::CharSort[self] < other
+  end
+end

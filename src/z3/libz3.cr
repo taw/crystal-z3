@@ -52,6 +52,7 @@ lib LibZ3
     Int = 2
     Real = 3
     Bitvec = 4
+    Char = 13
   end
 
   # Just list the ones we need, there's about 700 API calls total
@@ -124,6 +125,13 @@ lib LibZ3
   fun mk_bvurem = Z3_mk_bvurem(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvxnor = Z3_mk_bvxnor(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_bvxor = Z3_mk_bvxor(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_char = Z3_mk_char(ctx : Context, ch : UInt32) : Ast
+  fun mk_char_from_bv = Z3_mk_char_from_bv(ctx : Context, bv : Ast) : Ast
+  fun mk_char_is_digit = Z3_mk_char_is_digit(ctx : Context, ch : Ast) : Ast
+  fun mk_char_le = Z3_mk_char_le(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_char_sort = Z3_mk_char_sort(ctx : Context) : Sort
+  fun mk_char_to_bv = Z3_mk_char_to_bv(ctx : Context, ch : Ast) : Ast
+  fun mk_char_to_int = Z3_mk_char_to_int(ctx : Context, ch : Ast) : Ast
   fun mk_concat = Z3_mk_concat(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_config = Z3_mk_config() : Config
   fun mk_const = Z3_mk_const(ctx : Context, name : Symbol, sort : Sort) : Ast

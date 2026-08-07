@@ -12,11 +12,27 @@ describe Z3 do
     Z3::BoolSort.var("b").to_s.should eq("b")
     Z3::RealSort.var("c").to_s.should eq("c")
     Z3::BitvecSort.new(8).var("d").to_s.should eq("d")
+    Z3::CharSort.var("e").to_s.should eq("e")
 
     Z3::IntSort[42].to_s.should eq("42")
     Z3::BoolSort[true].to_s.should eq("true")
     Z3::RealSort[2.5].to_s.should eq("5/2")
     Z3::BitvecSort.new(8)[42].to_s.should eq("42")
+    Z3::CharSort['a'].value.should eq('a')
+  end
+
+  it "Z3.distinct (Char)" do
+    p = Z3.char("p")
+    q = Z3.char("q")
+    r = Z3.char("r")
+    solver = Z3::Solver.new
+    solver.assert Z3.distinct([p, q, r])
+    # Three distinct Chars need three code points, and 'a' to 'b' is only two
+    [p, q, r].each do |char|
+      solver.assert char >= 'a'
+      solver.assert char <= 'b'
+    end
+    solver.satisfiable?.should be_false
   end
 
   it "Z3.distinct (Real)" do

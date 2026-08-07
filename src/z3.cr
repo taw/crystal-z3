@@ -20,6 +20,10 @@ module Z3
     BoolExpr.new API.mk_distinct(args)
   end
 
+  def Z3.distinct(args : Array(CharExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
   def Z3.int(name : String)
     Z3::IntSort.var(name)
   end
@@ -34,6 +38,10 @@ module Z3
 
   def Z3.bitvec(name : String, size : UInt32)
     Z3::BitvecSort.new(size).var(name)
+  end
+
+  def Z3.char(name : String)
+    Z3::CharSort.var(name)
   end
 
   def Z3.version

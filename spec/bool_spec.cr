@@ -88,6 +88,14 @@ describe Z3::BoolExpr do
     expect_raises(Z3::Exception) { a.ite(v, Z3.bitvec("z", 12)) }
   end
 
+  it "if then else on Char" do
+    ch1 = Z3.char("ch1")
+    ch2 = Z3.char("ch2")
+    [a ==  true, ch1 == a.ite(ch2, 'x'), ch2 == 'y'].should have_solution(ch1 == 'y')
+    [a == false, ch1 == a.ite(ch2, 'x'), ch2 == 'y'].should have_solution(ch1 == 'x')
+    [a ==  true, ch1 == a.ite('x', ch2), ch2 == 'y'].should have_solution(ch1 == 'x')
+  end
+
   it "simplify" do
     t = Z3::BoolSort[true]
     f = Z3::BoolSort[false]

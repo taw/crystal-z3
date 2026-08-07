@@ -61,6 +61,14 @@ module Z3
       BitvecExpr.new API.mk_ite(self, b.sort[a], b), b.sort
     end
 
+    def ite(a : CharExpr, b : (CharExpr | Char)) : CharExpr
+      CharExpr.new API.mk_ite(self, a, CharSort[b])
+    end
+
+    def ite(a : Char, b : CharExpr) : CharExpr
+      CharExpr.new API.mk_ite(self, CharSort[a], b)
+    end
+
     def ~
       BoolExpr.new API.mk_not(self)
     end

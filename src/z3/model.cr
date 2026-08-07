@@ -8,7 +8,7 @@ module Z3
       API.model_inc_ref(@model)
     end
 
-    {% for type in %w[BoolExpr IntExpr BitvecExpr RealExpr] %}
+    {% for type in %w[BoolExpr IntExpr BitvecExpr RealExpr CharExpr] %}
       def eval(expr : {{type.id}}, complete=false)
         result = API.model_eval(self, expr, complete)
         raise Z3::Exception.new("Incorrect type returned") unless result.is_a?({{type.id}})
