@@ -14,6 +14,11 @@ blocks:
           value: x64-glibc-2.39
         - name: CRYSTAL_VERSION
           value: "1.21"
+        # The image ships an ancient system libz3 (4.8.x) in /usr/lib/x86_64-linux-gnu,
+        # which cc searches before /usr/local/lib. Only an explicit -L outranks it, and
+        # this env var is the one that also reaches the examples the integration specs run.
+        - name: CRYSTAL_LIBRARY_PATH
+          value: /usr/local/lib:/usr/lib/crystal
       jobs:
         - name: crystal spec
           commands:
@@ -26,5 +31,4 @@ blocks:
             - curl -fsSL https://crystal-lang.org/install.sh | sudo bash -s -- --version=$CRYSTAL_VERSION
             - crystal --version
             - checkout
-            # -L/usr/local/lib must be explicit: only command line -L outranks cc's built-in paths
-            - crystal spec --link-flags="-L/usr/local/lib"
+            - crystal spec
