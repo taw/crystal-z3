@@ -1,5 +1,11 @@
 module Z3
   class Solver
+    # Spelled out because Crystal can only guess an instance variable's type from a
+    # LibZ3 call it can see, and every call goes through API's error checking now
+    @solver : LibZ3::Solver
+    @model : Model?
+    @check : LibZ3::LBool?
+
     def initialize
       @solver = API.mk_solver
       # A solver at refcount 0 has unstable internals (e.g. #assertions crashes),

@@ -19,6 +19,23 @@ lib LibZ3
     True = 1
   end
 
+  # Z3 hands one of these to the error handler, and remembers it until the next call
+  enum ErrorCode
+    Ok = 0
+    SortError = 1
+    IndexOutOfBounds = 2
+    InvalidArg = 3
+    ParserError = 4
+    NoParser = 5
+    InvalidPattern = 6
+    MemoutFail = 7
+    FileAccessError = 8
+    InternalFatal = 9
+    InvalidUsage = 10
+    DecRefError = 11
+    Exception = 12
+  end
+
   enum AstKind
     Numeral = 0
     App = 1
@@ -51,6 +68,8 @@ lib LibZ3
   fun get_bool_value = Z3_get_bool_value(ctx : Context, ast : Ast) : LBool
   fun get_bv_sort_size = Z3_get_bv_sort_size(ctx : Context, sort : Sort) : UInt32
   fun get_decl_name = Z3_get_decl_name(ctx : Context, decl : FuncDecl) : Symbol
+  fun get_error_code = Z3_get_error_code(ctx : Context) : ErrorCode
+  fun get_error_msg = Z3_get_error_msg(ctx : Context, code : ErrorCode) : CString
   fun get_numeral_string = Z3_get_numeral_string(ctx : Context, ast : Ast) : CString
   fun get_range = Z3_get_range(ctx : Context, decl : FuncDecl) : Sort
   fun get_sort = Z3_get_sort(ctx : Context, ast : Ast) : Sort
@@ -157,6 +176,8 @@ lib LibZ3
   fun model_get_num_consts = Z3_model_get_num_consts(ctx : Context, model : Model) : UInt32
   fun model_inc_ref = Z3_model_inc_ref(ctx : Context, model : Model) : Void
   fun model_to_string = Z3_model_to_string(ctx : Context, model : Model) : CString
+  fun set_error = Z3_set_error(ctx : Context, code : ErrorCode) : Void
+  fun set_error_handler = Z3_set_error_handler(ctx : Context, handler : (Context, ErrorCode) -> Void) : Void
   fun simplify = Z3_simplify(ctx : Context, ast : Ast) : Ast
   fun solver_assert = Z3_solver_assert(ctx : Context, solver : Solver, ast : Ast) : Void
   fun solver_assert_and_track = Z3_solver_assert_and_track(ctx : Context, solver : Solver, ast : Ast, tracker : Ast) : Void
