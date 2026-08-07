@@ -1,5 +1,7 @@
 name: z3
 version: 0.2.0
+description: |
+  Crystal API for the Z3 Theorem Prover. Requires libz3 4.16.0 or newer.
 
 authors:
   - Tomasz Wegrzanowski <Tomasz.Wegrzanowski@gmail.com>

@@ -2,6 +2,13 @@
 
 Crystal API for Z3 Theorem Prover.
 
+## Requirements
+
+Z3 4.16.0 or newer. Older versions are missing API functions the bindings call, so
+linking against them fails with `undefined reference to Z3_mk_seq_replace_all` and
+friends. Note that distributions often package something much older - Ubuntu 24.04
+ships 4.8.12 - so check `z3 --version` rather than assuming.
+
 ## Installation
 
 1. Add the dependency to your `shard.yml`:
