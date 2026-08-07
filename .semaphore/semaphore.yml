@@ -17,7 +17,7 @@ blocks:
       jobs:
         - name: crystal spec
           commands:
-            - curl -sSLo /tmp/z3.zip https://github.com/Z3Prover/z3/releases/download/z3-$Z3_VERSION/z3-$Z3_VERSION-$Z3_DIST.zip
+            - curl -fsSLo /tmp/z3.zip https://github.com/Z3Prover/z3/releases/download/z3-$Z3_VERSION/z3-$Z3_VERSION-$Z3_DIST.zip
             - unzip -q /tmp/z3.zip -d /tmp
             - sudo cp /tmp/z3-$Z3_VERSION-$Z3_DIST/bin/libz3.so /usr/local/lib/
             - sudo cp /tmp/z3-$Z3_VERSION-$Z3_DIST/bin/z3 /usr/local/bin/
@@ -26,4 +26,5 @@ blocks:
             - curl -fsSL https://crystal-lang.org/install.sh | sudo bash -s -- --version=$CRYSTAL_VERSION
             - crystal --version
             - checkout
-            - crystal spec
+            # -L/usr/local/lib must be explicit: only command line -L outranks cc's built-in paths
+            - crystal spec --link-flags="-L/usr/local/lib"
