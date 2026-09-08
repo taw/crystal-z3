@@ -1,0 +1,30 @@
+#!/usr/bin/env crystal
+
+require "../src/z3"
+
+def check_multiplication_laws_1
+  a = Z3.int("a")
+  b = Z3.int("b")
+  solver = Z3::Solver.new
+  puts "Checking if (a+b)(a-b)==a*a-b*b"
+  solver.prove!(
+    (a + b) * (a - b) == (a * a - b * b)
+  )
+end
+
+def check_inequalities
+  a = Z3.int("a")
+  b = Z3.int("b")
+  solver = Z3::Solver.new
+  puts "Checking if a+b >= a"
+  solver.prove! a + b >= a
+
+  solver = Z3::Solver.new
+  solver.assert a >= 0
+  solver.assert b >= 0
+  puts "Checking if a+b >= a if a,b >= 0"
+  solver.prove! a + b >= a
+end
+
+check_multiplication_laws_1
+check_inequalities

@@ -1,0 +1,169 @@
+#!/usr/bin/env crystal
+
+require "../src/z3"
+
+# It's totally possible everything is backwards
+class CircuitProblem
+  record Pin, voltage : Z3::RealExpr, current : Array(Z3::RealExpr)
+
+  def initialize
+    @solver = Z3::Solver.new
+    @pins = {} of String => Pin
+  end
+
+  def battery(name, battery_voltage)
+    plus = create_pin("#{name}+")
+    minus = create_pin("#{name}-")
+    create_current("#{name}", "#{name}+", "#{name}-")
+    @solver.assert plus.voltage - minus.voltage == battery_voltage
+  end
+
+  def resistor(name, resistance)
+    a = create_pin("#{name}a")
+    b = create_pin("#{name}b")
+    current = create_current("#{name}", "#{name}a", "#{name}b")
+    # dV = RI
+    @solver.assert (a.voltage - b.voltage) == current * resistance
+  end
+
+  # This is super simple diode model
+  def diode(name)
+    a = create_pin("#{name}+")
+    b = create_pin("#{name}-")
+    current = create_current("#{name}", "#{name}+", "#{name}-")
+    # * current can't flow backwards
+    # * if voltage is reversed, current is stopped (infinite resistance)
+    # * if current is flowing, voltage is equalized (zero resistance)
+    # * voltage is same or current is zero
+    @solver.assert current >= 0
+    @solver.assert a.voltage <= b.voltage
+    @solver.assert Z3.or([a.voltage == b.voltage, current == 0])
+  end
+
+  def connect(a, b)
+    create_current("Wire #{a} #{b}", a, b)
+    @solver.assert @pins[a].voltage == @pins[b].voltage
+  end
+
+  def call(*vars)
+    setup_flow_rules!
+    with_solved_model do |model|
+      model.each do |n, v|
+        # Z3 quotes a name which isn't an SMT-LIB symbol, and these all have a
+        # space in them - so `to_s` says `|I V|` where the Ruby gem's own printer
+        # says `I V`. That printer is still to be ported.
+        name = n.to_s.strip('|')
+        next unless vars.includes?(name)
+        puts "* #{name} = #{v}"
+      end
+    end
+  end
+
+  def debug!
+    setup_flow_rules!
+    with_solved_model do |model|
+      model.each do |n, v|
+        puts "* #{n.to_s.strip('|')} = #{v}"
+      end
+    end
+  end
+
+  def ground(name)
+    @solver.assert @pins[name].voltage == 0
+  end
+
+  private def with_solved_model(&)
+    if @solver.satisfiable?
+      yield @solver.model
+    else
+      puts "Can't solve the problem"
+    end
+  end
+
+  private def setup_flow_rules!
+    @pins.each do |_name, pin|
+      # All current flows are equal
+      @solver.assert Z3.add(pin.current) == 0
+    end
+  end
+
+  private def create_pin(name)
+    raise "Pin named #{name} already exists" if @pins[name]?
+    @pins[name] = Pin.new(Z3.real("V #{name}"), [] of Z3::RealExpr)
+  end
+
+  private def create_current(name, source, sink)
+    raise "No such pin: #{source}" unless @pins[source]?
+    raise "No such pin: #{sink}" unless @pins[sink]?
+    current = Z3.real("I #{name}")
+    @pins[source].current << current
+    @pins[sink].current << -current
+    current
+  end
+end
+
+# http://physics.info/circuits-r/practice.shtml
+def problem_1!
+  problem = CircuitProblem.new
+  problem.battery "V", 125
+  problem.ground "V-"
+  problem.resistor "R1", 20
+  problem.resistor "R2", 30
+  problem.resistor "R3", 50
+  problem.connect "V-", "R1a"
+  problem.connect "R1b", "R2a"
+  problem.connect "R2b", "R3a"
+  problem.connect "R3b", "V+"
+  problem.call "I V"
+end
+
+def problem_2!
+  problem = CircuitProblem.new
+  problem.battery "V", 125
+  problem.ground "V-"
+  problem.resistor "R1", 20
+  problem.resistor "R2", 100
+  problem.resistor "R3", 50
+  problem.connect "V-", "R1a"
+  problem.connect "V-", "R2a"
+  problem.connect "V-", "R3a"
+  problem.connect "V+", "R1b"
+  problem.connect "V+", "R2b"
+  problem.connect "V+", "R3b"
+  problem.call "I V"
+end
+
+def problem_3!
+  # V+ [ D1 -> ] La
+  # V- [ D2 -> ] La
+  # V+ [ D3 <- ] Lb
+  # V- [ D4 <- ] Lb
+  [100, 50, 0, -50, -100].each do |v|
+    problem = CircuitProblem.new
+    problem.battery "V", v
+    problem.ground "V-"
+    problem.resistor "L", 100
+    problem.diode "D1"
+    problem.diode "D2"
+    problem.diode "D3"
+    problem.diode "D4"
+    problem.connect "D1-", "V+"
+    problem.connect "D1+", "La"
+    problem.connect "D2-", "V-"
+    problem.connect "D2+", "La"
+    problem.connect "D3-", "Lb"
+    problem.connect "D3+", "V+"
+    problem.connect "D4-", "Lb"
+    problem.connect "D4+", "V-"
+    problem.call "I V", "I L"
+  end
+end
+
+puts "Problem 1"
+problem_1!
+puts ""
+puts "Problem 2"
+problem_2!
+puts ""
+puts "Problem 3"
+problem_3!

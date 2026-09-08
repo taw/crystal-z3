@@ -1,0 +1,8 @@
+Checking if true == true
+Proven
+Checking if true == false
+Counterexample exists
+Proving ~(a & b) == (~a | ~b)
+Proven
+Proving ~(a | b) == (~a & ~b)
+Proven
