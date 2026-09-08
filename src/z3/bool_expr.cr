@@ -87,6 +87,20 @@ module Z3
       SeqExpr.new API.mk_ite(self, b.sort.cast(a), b), b.sort
     end
 
+    # Both branches have to be the same sort, and a Float's sort is its two bit
+    # counts, so `sort[]` is what says so
+    def ite(a : FloatExpr, b : (FloatExpr | Float64 | Int)) : FloatExpr
+      FloatExpr.new API.mk_ite(self, a, a.sort[b]), a.sort
+    end
+
+    def ite(a : (Float64 | Int), b : FloatExpr) : FloatExpr
+      FloatExpr.new API.mk_ite(self, b.sort[a], b), b.sort
+    end
+
+    def ite(a : RoundingModeExpr, b : RoundingModeExpr) : RoundingModeExpr
+      RoundingModeExpr.new API.mk_ite(self, a, b)
+    end
+
     def ~
       BoolExpr.new API.mk_not(self)
     end

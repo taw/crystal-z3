@@ -51,13 +51,15 @@ lib LibZ3
 
   # This is incomplete
   enum SortKind
-    Bool   =  1
-    Int    =  2
-    Real   =  3
-    Bitvec =  4
-    Seq    = 11
-    Re     = 12
-    Char   = 13
+    Bool         =  1
+    Int          =  2
+    Real         =  3
+    Bitvec       =  4
+    Float        =  9
+    RoundingMode = 10
+    Seq          = 11
+    Re           = 12
+    Char         = 13
   end
 
   # Just list the ones we need, there's about 700 API calls total
@@ -68,6 +70,18 @@ lib LibZ3
   fun ast_vector_inc_ref = Z3_ast_vector_inc_ref(ctx : Context, v : AstVector) : Void
   fun ast_vector_push = Z3_ast_vector_push(ctx : Context, v : AstVector, ast : Ast) : Void
   fun ast_vector_size = Z3_ast_vector_size(ctx : Context, v : AstVector) : UInt32
+  fun fpa_get_ebits = Z3_fpa_get_ebits(ctx : Context, sort : Sort) : UInt32
+  fun fpa_get_numeral_exponent_bv = Z3_fpa_get_numeral_exponent_bv(ctx : Context, ast : Ast, biased : Bool) : Ast
+  fun fpa_get_numeral_exponent_string = Z3_fpa_get_numeral_exponent_string(ctx : Context, ast : Ast, biased : Bool) : CString
+  fun fpa_get_numeral_sign_bv = Z3_fpa_get_numeral_sign_bv(ctx : Context, ast : Ast) : Ast
+  fun fpa_get_numeral_significand_bv = Z3_fpa_get_numeral_significand_bv(ctx : Context, ast : Ast) : Ast
+  fun fpa_get_numeral_significand_string = Z3_fpa_get_numeral_significand_string(ctx : Context, ast : Ast) : CString
+  fun fpa_get_sbits = Z3_fpa_get_sbits(ctx : Context, sort : Sort) : UInt32
+  fun fpa_is_numeral = Z3_fpa_is_numeral(ctx : Context, ast : Ast) : Bool
+  fun fpa_is_numeral_inf = Z3_fpa_is_numeral_inf(ctx : Context, ast : Ast) : Bool
+  fun fpa_is_numeral_nan = Z3_fpa_is_numeral_nan(ctx : Context, ast : Ast) : Bool
+  fun fpa_is_numeral_negative = Z3_fpa_is_numeral_negative(ctx : Context, ast : Ast) : Bool
+  fun fpa_is_numeral_zero = Z3_fpa_is_numeral_zero(ctx : Context, ast : Ast) : Bool
   fun func_entry_dec_ref = Z3_func_entry_dec_ref(ctx : Context, entry : FuncEntry) : Void
   fun func_entry_get_arg = Z3_func_entry_get_arg(ctx : Context, entry : FuncEntry, i : UInt32) : Ast
   fun func_entry_get_num_args = Z3_func_entry_get_num_args(ctx : Context, entry : FuncEntry) : UInt32
@@ -172,6 +186,52 @@ lib LibZ3
   fun mk_ext_rotate_right = Z3_mk_ext_rotate_right(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_extract = Z3_mk_extract(ctx : Context, high : UInt32, low : UInt32, a : Ast) : Ast
   fun mk_false = Z3_mk_false(ctx : Context) : Ast
+  fun mk_fpa_abs = Z3_mk_fpa_abs(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_add = Z3_mk_fpa_add(ctx : Context, rm : Ast, a : Ast, b : Ast) : Ast
+  fun mk_fpa_div = Z3_mk_fpa_div(ctx : Context, rm : Ast, a : Ast, b : Ast) : Ast
+  fun mk_fpa_eq = Z3_mk_fpa_eq(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_fma = Z3_mk_fpa_fma(ctx : Context, rm : Ast, a : Ast, b : Ast, c : Ast) : Ast
+  fun mk_fpa_fp = Z3_mk_fpa_fp(ctx : Context, sign : Ast, exponent : Ast, significand : Ast) : Ast
+  fun mk_fpa_geq = Z3_mk_fpa_geq(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_gt = Z3_mk_fpa_gt(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_inf = Z3_mk_fpa_inf(ctx : Context, sort : Sort, negative : Bool) : Ast
+  fun mk_fpa_is_infinite = Z3_mk_fpa_is_infinite(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_nan = Z3_mk_fpa_is_nan(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_negative = Z3_mk_fpa_is_negative(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_normal = Z3_mk_fpa_is_normal(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_positive = Z3_mk_fpa_is_positive(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_subnormal = Z3_mk_fpa_is_subnormal(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_is_zero = Z3_mk_fpa_is_zero(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_leq = Z3_mk_fpa_leq(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_lt = Z3_mk_fpa_lt(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_max = Z3_mk_fpa_max(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_min = Z3_mk_fpa_min(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_mul = Z3_mk_fpa_mul(ctx : Context, rm : Ast, a : Ast, b : Ast) : Ast
+  fun mk_fpa_nan = Z3_mk_fpa_nan(ctx : Context, sort : Sort) : Ast
+  fun mk_fpa_neg = Z3_mk_fpa_neg(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_numeral_double = Z3_mk_fpa_numeral_double(ctx : Context, v : Float64, sort : Sort) : Ast
+  fun mk_fpa_rem = Z3_mk_fpa_rem(ctx : Context, a : Ast, b : Ast) : Ast
+  fun mk_fpa_round_nearest_ties_to_away = Z3_mk_fpa_round_nearest_ties_to_away(ctx : Context) : Ast
+  fun mk_fpa_round_nearest_ties_to_even = Z3_mk_fpa_round_nearest_ties_to_even(ctx : Context) : Ast
+  fun mk_fpa_round_to_integral = Z3_mk_fpa_round_to_integral(ctx : Context, rm : Ast, a : Ast) : Ast
+  fun mk_fpa_round_toward_negative = Z3_mk_fpa_round_toward_negative(ctx : Context) : Ast
+  fun mk_fpa_round_toward_positive = Z3_mk_fpa_round_toward_positive(ctx : Context) : Ast
+  fun mk_fpa_round_toward_zero = Z3_mk_fpa_round_toward_zero(ctx : Context) : Ast
+  fun mk_fpa_rounding_mode_sort = Z3_mk_fpa_rounding_mode_sort(ctx : Context) : Sort
+  fun mk_fpa_sort = Z3_mk_fpa_sort(ctx : Context, ebits : UInt32, sbits : UInt32) : Sort
+  fun mk_fpa_sqrt = Z3_mk_fpa_sqrt(ctx : Context, rm : Ast, a : Ast) : Ast
+  fun mk_fpa_sub = Z3_mk_fpa_sub(ctx : Context, rm : Ast, a : Ast, b : Ast) : Ast
+  fun mk_fpa_to_fp_bv = Z3_mk_fpa_to_fp_bv(ctx : Context, bv : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_fp_float = Z3_mk_fpa_to_fp_float(ctx : Context, rm : Ast, a : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_fp_int_real = Z3_mk_fpa_to_fp_int_real(ctx : Context, rm : Ast, exponent : Ast, significand : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_fp_real = Z3_mk_fpa_to_fp_real(ctx : Context, rm : Ast, a : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_fp_signed = Z3_mk_fpa_to_fp_signed(ctx : Context, rm : Ast, bv : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_fp_unsigned = Z3_mk_fpa_to_fp_unsigned(ctx : Context, rm : Ast, bv : Ast, sort : Sort) : Ast
+  fun mk_fpa_to_ieee_bv = Z3_mk_fpa_to_ieee_bv(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_to_real = Z3_mk_fpa_to_real(ctx : Context, a : Ast) : Ast
+  fun mk_fpa_to_sbv = Z3_mk_fpa_to_sbv(ctx : Context, rm : Ast, a : Ast, size : UInt32) : Ast
+  fun mk_fpa_to_ubv = Z3_mk_fpa_to_ubv(ctx : Context, rm : Ast, a : Ast, size : UInt32) : Ast
+  fun mk_fpa_zero = Z3_mk_fpa_zero(ctx : Context, sort : Sort, negative : Bool) : Ast
   fun mk_fresh_const = Z3_mk_fresh_const(ctx : Context, prefix : CString, sort : Sort) : Ast
   fun mk_fresh_func_decl = Z3_mk_fresh_func_decl(ctx : Context, prefix : CString, count : UInt32, domain : Sort*, range : Sort) : FuncDecl
   fun mk_func_decl = Z3_mk_func_decl(ctx : Context, name : Symbol, count : UInt32, domain : Sort*, range : Sort) : FuncDecl

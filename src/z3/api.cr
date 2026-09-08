@@ -33,6 +33,16 @@ module Z3
     end
 
     {% for name in %w[
+                     fpa_get_ebits
+                     fpa_get_numeral_exponent_bv
+                     fpa_get_numeral_sign_bv
+                     fpa_get_numeral_significand_bv
+                     fpa_get_sbits
+                     fpa_is_numeral
+                     fpa_is_numeral_inf
+                     fpa_is_numeral_nan
+                     fpa_is_numeral_negative
+                     fpa_is_numeral_zero
                      func_entry_get_arg
                      func_entry_get_num_args
                      func_entry_get_value
@@ -106,6 +116,51 @@ module Z3
                      mk_ext_rotate_right
                      mk_extract
                      mk_false
+                     mk_fpa_abs
+                     mk_fpa_add
+                     mk_fpa_div
+                     mk_fpa_eq
+                     mk_fpa_fma
+                     mk_fpa_fp
+                     mk_fpa_geq
+                     mk_fpa_gt
+                     mk_fpa_inf
+                     mk_fpa_is_infinite
+                     mk_fpa_is_nan
+                     mk_fpa_is_negative
+                     mk_fpa_is_normal
+                     mk_fpa_is_positive
+                     mk_fpa_is_subnormal
+                     mk_fpa_is_zero
+                     mk_fpa_leq
+                     mk_fpa_lt
+                     mk_fpa_max
+                     mk_fpa_min
+                     mk_fpa_mul
+                     mk_fpa_nan
+                     mk_fpa_neg
+                     mk_fpa_numeral_double
+                     mk_fpa_rem
+                     mk_fpa_round_nearest_ties_to_away
+                     mk_fpa_round_nearest_ties_to_even
+                     mk_fpa_round_to_integral
+                     mk_fpa_round_toward_negative
+                     mk_fpa_round_toward_positive
+                     mk_fpa_round_toward_zero
+                     mk_fpa_sort
+                     mk_fpa_sqrt
+                     mk_fpa_sub
+                     mk_fpa_to_fp_bv
+                     mk_fpa_to_fp_float
+                     mk_fpa_to_fp_int_real
+                     mk_fpa_to_fp_real
+                     mk_fpa_to_fp_signed
+                     mk_fpa_to_fp_unsigned
+                     mk_fpa_to_ieee_bv
+                     mk_fpa_to_real
+                     mk_fpa_to_sbv
+                     mk_fpa_to_ubv
+                     mk_fpa_zero
                      mk_ge
                      mk_gt
                      mk_iff
@@ -250,6 +305,8 @@ module Z3
     # one has to be copied into a Crystal String before the next call.
     {% for name in %w[
                      ast_to_string
+                     fpa_get_numeral_exponent_string
+                     fpa_get_numeral_significand_string
                      get_numeral_string
                      model_to_string
                      optimize_get_help
@@ -321,6 +378,10 @@ module Z3
         CharSort
       when LibZ3::SortKind::Bitvec
         BitvecSort.new(checked(LibZ3.get_bv_sort_size(Context, _sort)))
+      when LibZ3::SortKind::Float
+        FloatSort.new(fpa_get_ebits(_sort), fpa_get_sbits(_sort))
+      when LibZ3::SortKind::RoundingMode
+        RoundingModeSort
       when LibZ3::SortKind::Seq
         # Seq(Char) comes back as StringSort, which is what SeqSort.new says it is
         SeqSort.new(sort_from_pointer(checked(LibZ3.get_seq_sort_basis(Context, _sort))))

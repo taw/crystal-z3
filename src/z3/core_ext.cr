@@ -115,6 +115,33 @@ abstract struct Int
   def ^(other : Z3::BitvecExpr)
     other.sort[self] ^ other
   end
+
+  # A Float literal takes its sort from the expression it's paired with. There's no
+  # arithmetic here because Float arithmetic needs a rounding mode, so it's spelled
+  # `expr.add(1.5, mode)` and never `1.5 + expr`.
+  def ==(other : Z3::FloatExpr)
+    other.sort[self] == other
+  end
+
+  def !=(other : Z3::FloatExpr)
+    other.sort[self] != other
+  end
+
+  def >=(other : Z3::FloatExpr)
+    other.sort[self] >= other
+  end
+
+  def >(other : Z3::FloatExpr)
+    other.sort[self] > other
+  end
+
+  def <=(other : Z3::FloatExpr)
+    other.sort[self] <= other
+  end
+
+  def <(other : Z3::FloatExpr)
+    other.sort[self] < other
+  end
 end
 
 struct Float64
@@ -156,6 +183,33 @@ struct Float64
 
   def <(other : Z3::RealExpr)
     Z3::RealSort[self] < other
+  end
+
+  # A Float literal takes its sort from the expression it's paired with. There's no
+  # arithmetic here because Float arithmetic needs a rounding mode, so it's spelled
+  # `expr.add(1.5, mode)` and never `1.5 + expr`.
+  def ==(other : Z3::FloatExpr)
+    other.sort[self] == other
+  end
+
+  def !=(other : Z3::FloatExpr)
+    other.sort[self] != other
+  end
+
+  def >=(other : Z3::FloatExpr)
+    other.sort[self] >= other
+  end
+
+  def >(other : Z3::FloatExpr)
+    other.sort[self] > other
+  end
+
+  def <=(other : Z3::FloatExpr)
+    other.sort[self] <= other
+  end
+
+  def <(other : Z3::FloatExpr)
+    other.sort[self] < other
   end
 end
 

@@ -6,7 +6,7 @@ module Z3
 
   # Any expression, regardless of sort. This is what we can recover from a raw
   # AST pointer, since Z3 only tells us the sort kind at runtime.
-  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr | CharExpr | StringExpr | SeqExpr
+  alias AnyExpr = BoolExpr | IntExpr | RealExpr | BitvecExpr | CharExpr | StringExpr | SeqExpr | FloatExpr | RoundingModeExpr
 
   # Any sort, as a value. The sorts with nothing to configure are singletons, and a
   # Crystal class is already one of those, so they are the classes themselves - while
@@ -15,7 +15,7 @@ module Z3
   # Whichever it is, every sort answers `to_unsafe` with its Z3 sort, `from_ast` with
   # an expression of itself, and `cast` with a Crystal object converted into one. Those
   # three are what a Seq needs, since its element sort is only known at runtime.
-  alias AnySort = BoolSort.class | IntSort.class | RealSort.class | CharSort.class | StringSort.class | BitvecSort | SeqSort
+  alias AnySort = BoolSort.class | IntSort.class | RealSort.class | CharSort.class | StringSort.class | RoundingModeSort.class | BitvecSort | SeqSort | FloatSort
 
   def Z3.distinct(args : Array(IntExpr))
     BoolExpr.new API.mk_distinct(args)
@@ -45,6 +45,16 @@ module Z3
     BoolExpr.new API.mk_distinct(args)
   end
 
+  # Z3's own `distinct`, so this is term inequality - `+zero` and `-zero` are
+  # distinct floats even though `+zero == -zero`, and two NaNs are not
+  def Z3.distinct(args : Array(FloatExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
+  def Z3.distinct(args : Array(RoundingModeExpr))
+    BoolExpr.new API.mk_distinct(args)
+  end
+
   def Z3.int(name : String)
     Z3::IntSort.var(name)
   end
@@ -67,6 +77,24 @@ module Z3
 
   def Z3.string(name : String)
     Z3::StringSort.var(name)
+  end
+
+  # The sort is a width - 16, 32, 64 or 128 - a name - :half, :single, :double or
+  # :quadruple - a `FloatSort`, or the two bit counts spelled out
+  def Z3.float(name : String, sort : FloatSort)
+    sort.var(name)
+  end
+
+  def Z3.float(name : String, width : Int | Symbol)
+    Z3::FloatSort.new(width).var(name)
+  end
+
+  def Z3.float(name : String, ebits : Int, sbits : Int)
+    Z3::FloatSort.new(ebits, sbits).var(name)
+  end
+
+  def Z3.rounding_mode(name : String)
+    Z3::RoundingModeSort.var(name)
   end
 
   def Z3.seq(name : String, element_sort)
