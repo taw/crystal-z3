@@ -82,7 +82,7 @@ module Z3
     if args.empty?
       IntSort[0]
     else
-      IntExpr.new API.mk_add(args.map{|a| IntSort[a]})
+      IntExpr.new API.mk_add(args.map { |a| IntSort[a] })
     end
   end
 
@@ -90,7 +90,7 @@ module Z3
     if args.empty?
       IntSort[1]
     else
-      IntExpr.new API.mk_mul(args.map{|a| IntSort[a]})
+      IntExpr.new API.mk_mul(args.map { |a| IntSort[a] })
     end
   end
 
@@ -111,11 +111,11 @@ module Z3
   end
 
   def Z3.and(args : Array(BoolExpr | Bool))
-    BoolExpr.new API.mk_and(args.map{|a| BoolSort[a]})
+    BoolExpr.new API.mk_and(args.map { |a| BoolSort[a] })
   end
 
   def Z3.or(args : Array(BoolExpr | Bool))
-    BoolExpr.new API.mk_or(args.map{|a| BoolSort[a]})
+    BoolExpr.new API.mk_or(args.map { |a| BoolSort[a] })
   end
 
   # Native cardinality constraint: at most k of the given Bool exprs are true.

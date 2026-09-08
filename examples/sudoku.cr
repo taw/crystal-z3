@@ -40,12 +40,12 @@ class SudokuSolver
 
   def read_data(path)
     File.read_lines(path).map do |line|
-      line.split.map{|c| c == "_" ? nil : c.to_i}
+      line.split.map { |c| c == "_" ? nil : c.to_i }
     end
   end
 
   def cell_var(cell, i, j)
-    v = Z3.int("cell[#{i+1},#{j+1}]")
+    v = Z3.int("cell[#{i + 1},#{j + 1}]")
     @solver.assert v >= 1
     @solver.assert v <= 9
     @solver.assert v == cell if cell
@@ -55,7 +55,7 @@ class SudokuSolver
   def print_answer
     model = @solver.model
     @cells.each do |row|
-      puts row.map{|v| model[v]}.join(" ")
+      puts row.map { |v| model[v] }.join(" ")
     end
   end
 end

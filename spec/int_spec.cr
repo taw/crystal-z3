@@ -25,33 +25,33 @@ describe Z3::IntExpr do
   end
 
   it "/" do
-    [a ==  10, b ==  3, c == a / b].should have_solution(c ==  3)
-    [a == -10, b ==  3, c == a / b].should have_solution(c == -4)
-    [a ==  10, b == -3, c == a / b].should have_solution(c == -3)
-    [a == -10, b == -3, c == a / b].should have_solution(c ==  4)
+    [a == 10, b == 3, c == a / b].should have_solution(c == 3)
+    [a == -10, b == 3, c == a / b].should have_solution(c == -4)
+    [a == 10, b == -3, c == a / b].should have_solution(c == -3)
+    [a == -10, b == -3, c == a / b].should have_solution(c == 4)
   end
 
   # Can't say these make much sense, but let's document what Z3 actually does
   it "rem" do
-    [a ==  10, b ==  3, c == a.rem(b)].should have_solution(c == 10 -  3 *  3)
-    [a == -10, b ==  3, c == a.rem(b)].should have_solution(c == -10 -  3 * -4)
-    [a ==  10, b == -3, c == a.rem(b)].should have_solution(c == -( 10 - -3 * -3))
-    [a == -10, b == -3, c == a.rem(b)].should have_solution(c == -(-10 - -3 *  4))
+    [a == 10, b == 3, c == a.rem(b)].should have_solution(c == 10 - 3 * 3)
+    [a == -10, b == 3, c == a.rem(b)].should have_solution(c == -10 - 3 * -4)
+    [a == 10, b == -3, c == a.rem(b)].should have_solution(c == -(10 - -3 * -3))
+    [a == -10, b == -3, c == a.rem(b)].should have_solution(c == -(-10 - -3 * 4))
   end
 
   it "mod" do
-    [a ==  10, b ==  3, c == a.mod(b)].should have_solution(c == 1)
-    [a ==  10, b == -3, c == a.mod(b)].should have_solution(c == 1)
-    [a == -10, b ==  3, c == a.mod(b)].should have_solution(c == 2)
+    [a == 10, b == 3, c == a.mod(b)].should have_solution(c == 1)
+    [a == 10, b == -3, c == a.mod(b)].should have_solution(c == 1)
+    [a == -10, b == 3, c == a.mod(b)].should have_solution(c == 2)
     [a == -10, b == -3, c == a.mod(b)].should have_solution(c == 2)
   end
 
   # It doesn't match Crystal on a negative right side, but nobody does modulo a
   # negative anyway - the Python Z3 API does the same thing
   it "%" do
-    [a ==  10, b ==  3, c == a % b].should have_solution(c == 1)
-    [a ==  10, b == -3, c == a % b].should have_solution(c == 1)
-    [a == -10, b ==  3, c == a % b].should have_solution(c == 2)
+    [a == 10, b == 3, c == a % b].should have_solution(c == 1)
+    [a == 10, b == -3, c == a % b].should have_solution(c == 1)
+    [a == -10, b == 3, c == a % b].should have_solution(c == 2)
     [a == -10, b == -3, c == a % b].should have_solution(c == 2)
   end
 
@@ -146,8 +146,8 @@ describe Z3::IntExpr do
   it "simplify" do
     u = Z3::IntSort[5]
     v = Z3::IntSort[3]
-    ((u+v).to_s).should eq("(+ 5 3)")
-    ((u+v).simplify.to_s).should eq("8")
+    ((u + v).to_s).should eq("(+ 5 3)")
+    ((u + v).simplify.to_s).should eq("8")
   end
 
   it "to_s and inspect" do
@@ -178,8 +178,8 @@ describe Z3::IntExpr do
     Z3::IntSort[5].value.should be_a(BigInt)
     # Bigger than any Crystal Int, and still exact
     Z3::IntSort[BigInt.new(2) ** 100].value.should eq(BigInt.new(2) ** 100)
-    expect_raises(Z3::Exception){ a.value }
-    expect_raises(Z3::Exception){ (a + b).value }
+    expect_raises(Z3::Exception) { a.value }
+    expect_raises(Z3::Exception) { (a + b).value }
   end
 
   it "to_i / to_i64 / to_big_i" do
@@ -189,8 +189,8 @@ describe Z3::IntExpr do
     Z3::IntSort[5].to_i.should be_a(Int32)
     Z3::IntSort[5].to_i64.should be_a(Int64)
     Z3::IntSort[5].to_big_i.should be_a(BigInt)
-    expect_raises(Z3::Exception){ a.to_i }
-    expect_raises(Z3::Exception){ (a + b).to_i }
+    expect_raises(Z3::Exception) { a.to_i }
+    expect_raises(Z3::Exception) { (a + b).to_i }
   end
 
   it "#to_real" do
@@ -229,7 +229,7 @@ describe Z3::IntExpr do
     [
       a == 10,
       b == 20,
-      c == Z3.add([a, 30, b])
+      c == Z3.add([a, 30, b]),
     ].should have_solution(
       c == 60,
     )
@@ -255,7 +255,7 @@ describe Z3::IntExpr do
     [
       a == 10,
       b == 20,
-      c == Z3.mul([a, 30, b])
+      c == Z3.mul([a, 30, b]),
     ].should have_solution(
       c == 6000,
     )

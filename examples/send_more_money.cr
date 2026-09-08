@@ -39,8 +39,8 @@ more_sum = (
 money_sum = (
   10000 * vars["m"] +
   1000 * vars["o"] +
-  100 * vars["n"]+
-  10 * vars["e"]+
+  100 * vars["n"] +
+  10 * vars["e"] +
   vars["y"]
 )
 

@@ -8,7 +8,7 @@ describe Z3::RealExpr do
 
   it "+" do
     [a == 2, b == 4, c == a + b].should have_solution(c == 6)
-    [a == BigRational.new(1,3), b == BigRational.new(3,2), c == a + b].should have_solution(c == BigRational.new(11, 6))
+    [a == BigRational.new(1, 3), b == BigRational.new(3, 2), c == a + b].should have_solution(c == BigRational.new(11, 6))
   end
 
   # Crystal has no coerce protocol, so every reversed operator is spelled out
@@ -35,9 +35,9 @@ describe Z3::RealExpr do
   end
 
   it "/" do
-    [a ==  10, b ==  3, c == a / b].should have_solution(c == BigRational.new(10, 3))
-    [a == -10, b ==  3, c == a / b].should have_solution(c == BigRational.new(-10, 3))
-    [a ==  10, b == -3, c == a / b].should have_solution(c == BigRational.new(-10, 3))
+    [a == 10, b == 3, c == a / b].should have_solution(c == BigRational.new(10, 3))
+    [a == -10, b == 3, c == a / b].should have_solution(c == BigRational.new(-10, 3))
+    [a == 10, b == -3, c == a / b].should have_solution(c == BigRational.new(-10, 3))
     [a == -10, b == -3, c == a / b].should have_solution(c == BigRational.new(10, 3))
   end
 

@@ -115,11 +115,11 @@ describe Z3::BitvecExpr do
 
   it ">" do
     expect_raises(Z3::Exception) { a > b }
-    [a == 100, b ==  20, x == a.unsigned_gt(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.unsigned_gt(b)].should have_solution(x == true)
     [a == 100, b == 100, x == a.unsigned_gt(b)].should have_solution(x == false)
     [a == 100, b == 120, x == a.unsigned_gt(b)].should have_solution(x == false)
     [a == 100, b == 200, x == a.unsigned_gt(b)].should have_solution(x == false)
-    [a == 100, b ==  20, x == a.signed_gt(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.signed_gt(b)].should have_solution(x == true)
     [a == 100, b == 100, x == a.signed_gt(b)].should have_solution(x == false)
     [a == 100, b == 120, x == a.signed_gt(b)].should have_solution(x == false)
     [a == 100, b == 200, x == a.signed_gt(b)].should have_solution(x == true)
@@ -127,11 +127,11 @@ describe Z3::BitvecExpr do
 
   it ">=" do
     expect_raises(Z3::Exception) { a >= b }
-    [a == 100, b ==  20, x == a.unsigned_ge(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.unsigned_ge(b)].should have_solution(x == true)
     [a == 100, b == 100, x == a.unsigned_ge(b)].should have_solution(x == true)
     [a == 100, b == 120, x == a.unsigned_ge(b)].should have_solution(x == false)
     [a == 100, b == 200, x == a.unsigned_ge(b)].should have_solution(x == false)
-    [a == 100, b ==  20, x == a.signed_ge(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.signed_ge(b)].should have_solution(x == true)
     [a == 100, b == 100, x == a.signed_ge(b)].should have_solution(x == true)
     [a == 100, b == 120, x == a.signed_ge(b)].should have_solution(x == false)
     [a == 100, b == 200, x == a.signed_ge(b)].should have_solution(x == true)
@@ -139,33 +139,33 @@ describe Z3::BitvecExpr do
 
   it "<" do
     expect_raises(Z3::Exception) { a < b }
-    [a == 100, b ==  20, x == a.unsigned_lt(b)].should have_solution(x == false)
+    [a == 100, b == 20, x == a.unsigned_lt(b)].should have_solution(x == false)
     [a == 100, b == 100, x == a.unsigned_lt(b)].should have_solution(x == false)
-    [a == 100, b == 120, x == a.unsigned_lt(b)].should have_solution(x ==  true)
-    [a == 100, b == 200, x == a.unsigned_lt(b)].should have_solution(x ==  true)
-    [a == 100, b ==  20, x == a.signed_lt(b)].should have_solution(x == false)
+    [a == 100, b == 120, x == a.unsigned_lt(b)].should have_solution(x == true)
+    [a == 100, b == 200, x == a.unsigned_lt(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.signed_lt(b)].should have_solution(x == false)
     [a == 100, b == 100, x == a.signed_lt(b)].should have_solution(x == false)
-    [a == 100, b == 120, x == a.signed_lt(b)].should have_solution(x ==  true)
+    [a == 100, b == 120, x == a.signed_lt(b)].should have_solution(x == true)
     [a == 100, b == 200, x == a.signed_lt(b)].should have_solution(x == false)
   end
 
   it "<=" do
     expect_raises(Z3::Exception) { a <= b }
-    [a == 100, b ==  20, x == a.unsigned_le(b)].should have_solution(x == false)
-    [a == 100, b == 100, x == a.unsigned_le(b)].should have_solution(x ==  true)
-    [a == 100, b == 120, x == a.unsigned_le(b)].should have_solution(x ==  true)
-    [a == 100, b == 200, x == a.unsigned_le(b)].should have_solution(x ==  true)
-    [a == 100, b ==  20, x == a.signed_le(b)].should have_solution(x == false)
-    [a == 100, b == 100, x == a.signed_le(b)].should have_solution(x ==  true)
-    [a == 100, b == 120, x == a.signed_le(b)].should have_solution(x ==  true)
+    [a == 100, b == 20, x == a.unsigned_le(b)].should have_solution(x == false)
+    [a == 100, b == 100, x == a.unsigned_le(b)].should have_solution(x == true)
+    [a == 100, b == 120, x == a.unsigned_le(b)].should have_solution(x == true)
+    [a == 100, b == 200, x == a.unsigned_le(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.signed_le(b)].should have_solution(x == false)
+    [a == 100, b == 100, x == a.signed_le(b)].should have_solution(x == true)
+    [a == 100, b == 120, x == a.signed_le(b)].should have_solution(x == true)
     [a == 100, b == 200, x == a.signed_le(b)].should have_solution(x == false)
   end
 
   it "zero_ext / sign_ext" do
-    [a ==  100, d ==  a.zero_ext(4)].should have_solution(d == 100)
-    [a == -100, d ==  a.zero_ext(4)].should have_solution(d == 2**8-100)
-    [a ==  100, d ==  a.sign_ext(4)].should have_solution(d == 100)
-    [a == -100, d ==  a.sign_ext(4)].should have_solution(d == 2**12-100)
+    [a == 100, d == a.zero_ext(4)].should have_solution(d == 100)
+    [a == -100, d == a.zero_ext(4)].should have_solution(d == 2**8 - 100)
+    [a == 100, d == a.sign_ext(4)].should have_solution(d == 100)
+    [a == -100, d == a.sign_ext(4)].should have_solution(d == 2**12 - 100)
     a.zero_ext(4).size.should eq(12)
     a.sign_ext(4).size.should eq(12)
     expect_raises(Z3::Exception) { a.zero_ext(-1) }
@@ -269,8 +269,8 @@ describe Z3::BitvecExpr do
   it "simplify" do
     u = bv8[100]
     v = bv8[50]
-    ((u+v).to_s).should eq("(bvadd #x64 #x32)")
-    ((u+v).simplify.to_s).should eq("150")
+    ((u + v).to_s).should eq("(bvadd #x64 #x32)")
+    ((u + v).simplify.to_s).should eq("150")
   end
 
   it "to_s and inspect" do
@@ -324,7 +324,7 @@ describe Z3::BitvecExpr do
   it "add overflow / underflow" do
     expect_raises(Z3::Exception) { a.add_no_overflow?(b) }
     expect_raises(Z3::Exception) { a.unsigned_add_no_underflow?(b) }
-    [a == 100, b ==  20, x == a.signed_add_no_overflow?(b)].should have_solution(x == true)
+    [a == 100, b == 20, x == a.signed_add_no_overflow?(b)].should have_solution(x == true)
     [a == 100, b == 100, x == a.signed_add_no_overflow?(b)].should have_solution(x == false)
     [a == 200, b == 100, x == a.unsigned_add_no_overflow?(b)].should have_solution(x == false)
     [a == 100, b == 100, x == a.unsigned_add_no_overflow?(b)].should have_solution(x == true)
@@ -335,22 +335,22 @@ describe Z3::BitvecExpr do
   # Subtraction is addition's mirror image: only signed can overflow here...
   it "sub overflow" do
     expect_raises(Z3::Exception) { a.unsigned_sub_no_overflow?(b) }
-    [a ==   50, b ==   50, x == a.sub_no_overflow?(b)].should have_solution(x == true)
-    [a ==  100, b == -100, x == a.sub_no_overflow?(b)].should have_solution(x == false)
-    [a ==  127, b ==   -1, x == a.sub_no_overflow?(b)].should have_solution(x == false)
-    [a == -128, b ==    1, x == a.sub_no_overflow?(b)].should have_solution(x == true)
-    [a ==   50, b ==   50, x == a.signed_sub_no_overflow?(b)].should have_solution(x == true)
-    [a ==  127, b ==   -1, x == a.signed_sub_no_overflow?(b)].should have_solution(x == false)
+    [a == 50, b == 50, x == a.sub_no_overflow?(b)].should have_solution(x == true)
+    [a == 100, b == -100, x == a.sub_no_overflow?(b)].should have_solution(x == false)
+    [a == 127, b == -1, x == a.sub_no_overflow?(b)].should have_solution(x == false)
+    [a == -128, b == 1, x == a.sub_no_overflow?(b)].should have_solution(x == true)
+    [a == 50, b == 50, x == a.signed_sub_no_overflow?(b)].should have_solution(x == true)
+    [a == 127, b == -1, x == a.signed_sub_no_overflow?(b)].should have_solution(x == false)
   end
 
   # ...and both signs can underflow here, so this is the one which takes a sign
   it "sub underflow" do
     expect_raises(Z3::Exception) { a.sub_no_underflow?(b) }
-    [a ==  100, b ==   50, x == a.signed_sub_no_underflow?(b)].should have_solution(x == true)
-    [a == -100, b ==  100, x == a.signed_sub_no_underflow?(b)].should have_solution(x == false)
-    [a == -128, b ==    1, x == a.signed_sub_no_underflow?(b)].should have_solution(x == false)
-    [a ==  100, b ==   50, x == a.unsigned_sub_no_underflow?(b)].should have_solution(x == true)
-    [a ==   50, b ==  100, x == a.unsigned_sub_no_underflow?(b)].should have_solution(x == false)
+    [a == 100, b == 50, x == a.signed_sub_no_underflow?(b)].should have_solution(x == true)
+    [a == -100, b == 100, x == a.signed_sub_no_underflow?(b)].should have_solution(x == false)
+    [a == -128, b == 1, x == a.signed_sub_no_underflow?(b)].should have_solution(x == false)
+    [a == 100, b == 50, x == a.unsigned_sub_no_underflow?(b)].should have_solution(x == true)
+    [a == 50, b == 100, x == a.unsigned_sub_no_underflow?(b)].should have_solution(x == false)
   end
 
   it "neg overflow" do
