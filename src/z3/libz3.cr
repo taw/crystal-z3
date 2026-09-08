@@ -7,70 +7,90 @@ lib LibZ3
   type Config = Void*
   type Context = Void*
   type FuncDecl = Void*
+  type FuncEntry = Void*
+  type FuncInterp = Void*
   type Model = Void*
+  type Optimize = Void*
   type Solver = Void*
   type Sort = Void*
   type Stats = Void*
   type Symbol = Void*
 
   enum LBool
-    False = -1
-    Undefined = 0
-    True = 1
+    False     = -1
+    Undefined =  0
+    True      =  1
   end
 
   # Z3 hands one of these to the error handler, and remembers it until the next call
   enum ErrorCode
-    Ok = 0
-    SortError = 1
-    IndexOutOfBounds = 2
-    InvalidArg = 3
-    ParserError = 4
-    NoParser = 5
-    InvalidPattern = 6
-    MemoutFail = 7
-    FileAccessError = 8
-    InternalFatal = 9
-    InvalidUsage = 10
-    DecRefError = 11
-    Exception = 12
+    Ok               =  0
+    SortError        =  1
+    IndexOutOfBounds =  2
+    InvalidArg       =  3
+    ParserError      =  4
+    NoParser         =  5
+    InvalidPattern   =  6
+    MemoutFail       =  7
+    FileAccessError  =  8
+    InternalFatal    =  9
+    InvalidUsage     = 10
+    DecRefError      = 11
+    Exception        = 12
   end
 
   enum AstKind
-    Numeral = 0
-    App = 1
-    Var = 2
-    Quantifier = 3
-    Sort = 4
-    FuncDecl = 5
-    Unknown = 1000
+    Numeral    =    0
+    App        =    1
+    Var        =    2
+    Quantifier =    3
+    Sort       =    4
+    FuncDecl   =    5
+    Unknown    = 1000
   end
 
   # This is incomplete
   enum SortKind
-    Bool = 1
-    Int = 2
-    Real = 3
-    Bitvec = 4
-    Seq = 11
-    Re = 12
-    Char = 13
+    Bool   =  1
+    Int    =  2
+    Real   =  3
+    Bitvec =  4
+    Seq    = 11
+    Re     = 12
+    Char   = 13
   end
 
   # Just list the ones we need, there's about 700 API calls total
+  fun add_rec_def = Z3_add_rec_def(ctx : Context, decl : FuncDecl, n : UInt32, args : Ast*, body : Ast) : Void
   fun ast_to_string = Z3_ast_to_string(ctx : Context, ast : Ast) : CString
   fun ast_vector_dec_ref = Z3_ast_vector_dec_ref(ctx : Context, v : AstVector) : Void
   fun ast_vector_get = Z3_ast_vector_get(ctx : Context, v : AstVector, i : UInt32) : Ast
   fun ast_vector_inc_ref = Z3_ast_vector_inc_ref(ctx : Context, v : AstVector) : Void
+  fun ast_vector_push = Z3_ast_vector_push(ctx : Context, v : AstVector, ast : Ast) : Void
   fun ast_vector_size = Z3_ast_vector_size(ctx : Context, v : AstVector) : UInt32
+  fun func_entry_dec_ref = Z3_func_entry_dec_ref(ctx : Context, entry : FuncEntry) : Void
+  fun func_entry_get_arg = Z3_func_entry_get_arg(ctx : Context, entry : FuncEntry, i : UInt32) : Ast
+  fun func_entry_get_num_args = Z3_func_entry_get_num_args(ctx : Context, entry : FuncEntry) : UInt32
+  fun func_entry_get_value = Z3_func_entry_get_value(ctx : Context, entry : FuncEntry) : Ast
+  fun func_entry_inc_ref = Z3_func_entry_inc_ref(ctx : Context, entry : FuncEntry) : Void
+  fun func_interp_dec_ref = Z3_func_interp_dec_ref(ctx : Context, interp : FuncInterp) : Void
+  fun func_interp_get_arity = Z3_func_interp_get_arity(ctx : Context, interp : FuncInterp) : UInt32
+  fun func_interp_get_else = Z3_func_interp_get_else(ctx : Context, interp : FuncInterp) : Ast
+  fun func_interp_get_entry = Z3_func_interp_get_entry(ctx : Context, interp : FuncInterp, i : UInt32) : FuncEntry
+  fun func_interp_get_num_entries = Z3_func_interp_get_num_entries(ctx : Context, interp : FuncInterp) : UInt32
+  fun func_interp_inc_ref = Z3_func_interp_inc_ref(ctx : Context, interp : FuncInterp) : Void
   fun get_algebraic_number_lower = Z3_get_algebraic_number_lower(ctx : Context, ast : Ast, precision : UInt32) : Ast
   fun get_algebraic_number_upper = Z3_get_algebraic_number_upper(ctx : Context, ast : Ast, precision : UInt32) : Ast
   fun get_app_arg = Z3_get_app_arg(ctx : Context, app : App, i : UInt32) : Ast
+  fun get_app_decl = Z3_get_app_decl(ctx : Context, app : App) : FuncDecl
   fun get_app_num_args = Z3_get_app_num_args(ctx : Context, app : App) : UInt32
+  fun get_arity = Z3_get_arity(ctx : Context, decl : FuncDecl) : UInt32
   fun get_ast_kind = Z3_get_ast_kind(ctx : Context, ast : Ast) : AstKind
   fun get_bool_value = Z3_get_bool_value(ctx : Context, ast : Ast) : LBool
   fun get_bv_sort_size = Z3_get_bv_sort_size(ctx : Context, sort : Sort) : UInt32
+  fun get_decl_kind = Z3_get_decl_kind(ctx : Context, decl : FuncDecl) : UInt32
   fun get_decl_name = Z3_get_decl_name(ctx : Context, decl : FuncDecl) : Symbol
+  fun get_domain = Z3_get_domain(ctx : Context, decl : FuncDecl, i : UInt32) : Sort
   fun get_error_code = Z3_get_error_code(ctx : Context) : ErrorCode
   fun get_error_msg = Z3_get_error_msg(ctx : Context, code : ErrorCode) : CString
   fun get_numeral_string = Z3_get_numeral_string(ctx : Context, ast : Ast) : CString
@@ -88,6 +108,8 @@ lib LibZ3
   fun mk_abs = Z3_mk_abs(ctx : Context, a : Ast) : Ast
   fun mk_add = Z3_mk_add(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_and = Z3_mk_and(ctx : Context, count : UInt32, asts : Ast*) : Ast
+  fun mk_app = Z3_mk_app(ctx : Context, decl : FuncDecl, count : UInt32, args : Ast*) : Ast
+  fun mk_ast_vector = Z3_mk_ast_vector(ctx : Context) : AstVector
   fun mk_atleast = Z3_mk_atleast(ctx : Context, count : UInt32, asts : Ast*, k : UInt32) : Ast
   fun mk_atmost = Z3_mk_atmost(ctx : Context, count : UInt32, asts : Ast*, k : UInt32) : Ast
   fun mk_bit2bool = Z3_mk_bit2bool(ctx : Context, i : UInt32, a : Ast) : Ast
@@ -139,7 +161,7 @@ lib LibZ3
   fun mk_char_to_bv = Z3_mk_char_to_bv(ctx : Context, ch : Ast) : Ast
   fun mk_char_to_int = Z3_mk_char_to_int(ctx : Context, ch : Ast) : Ast
   fun mk_concat = Z3_mk_concat(ctx : Context, a : Ast, b : Ast) : Ast
-  fun mk_config = Z3_mk_config() : Config
+  fun mk_config = Z3_mk_config : Config
   fun mk_const = Z3_mk_const(ctx : Context, name : Symbol, sort : Sort) : Ast
   fun mk_context = Z3_mk_context(cfg : Config) : Context
   fun mk_distinct = Z3_mk_distinct(ctx : Context, count : UInt32, asts : Ast*) : Ast
@@ -150,6 +172,9 @@ lib LibZ3
   fun mk_ext_rotate_right = Z3_mk_ext_rotate_right(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_extract = Z3_mk_extract(ctx : Context, high : UInt32, low : UInt32, a : Ast) : Ast
   fun mk_false = Z3_mk_false(ctx : Context) : Ast
+  fun mk_fresh_const = Z3_mk_fresh_const(ctx : Context, prefix : CString, sort : Sort) : Ast
+  fun mk_fresh_func_decl = Z3_mk_fresh_func_decl(ctx : Context, prefix : CString, count : UInt32, domain : Sort*, range : Sort) : FuncDecl
+  fun mk_func_decl = Z3_mk_func_decl(ctx : Context, name : Symbol, count : UInt32, domain : Sort*, range : Sort) : FuncDecl
   fun mk_ge = Z3_mk_ge(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_gt = Z3_mk_gt(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_iff = Z3_mk_iff(ctx : Context, a : Ast, b : Ast) : Ast
@@ -166,6 +191,7 @@ lib LibZ3
   fun mk_mul = Z3_mk_mul(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_not = Z3_mk_not(ctx : Context, a : Ast) : Ast
   fun mk_numeral = Z3_mk_numeral(ctx : Context, s : CString, sort : Sort) : Ast
+  fun mk_optimize = Z3_mk_optimize(ctx : Context) : Optimize
   fun mk_or = Z3_mk_or(ctx : Context, count : UInt32, asts : Ast*) : Ast
   fun mk_pbeq = Z3_mk_pbeq(ctx : Context, count : UInt32, asts : Ast*, coeffs : Int32*, k : Int32) : Ast
   fun mk_pbge = Z3_mk_pbge(ctx : Context, count : UInt32, asts : Ast*, coeffs : Int32*, k : Int32) : Ast
@@ -173,6 +199,7 @@ lib LibZ3
   fun mk_power = Z3_mk_power(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_real2int = Z3_mk_real2int(ctx : Context, a : Ast) : Ast
   fun mk_real_sort = Z3_mk_real_sort(ctx : Context) : Sort
+  fun mk_rec_func_decl = Z3_mk_rec_func_decl(ctx : Context, name : Symbol, count : UInt32, domain : Sort*, range : Sort) : FuncDecl
   fun mk_rem = Z3_mk_rem(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_repeat = Z3_mk_repeat(ctx : Context, n : UInt32, a : Ast) : Ast
   fun mk_rotate_left = Z3_mk_rotate_left(ctx : Context, n : UInt32, a : Ast) : Ast
@@ -194,7 +221,9 @@ lib LibZ3
   fun mk_seq_suffix = Z3_mk_seq_suffix(ctx : Context, suffix : Ast, s : Ast) : Ast
   fun mk_seq_unit = Z3_mk_seq_unit(ctx : Context, a : Ast) : Ast
   fun mk_sign_ext = Z3_mk_sign_ext(ctx : Context, n : UInt32, a : Ast) : Ast
+  fun mk_simple_solver = Z3_mk_simple_solver(ctx : Context) : Solver
   fun mk_solver = Z3_mk_solver(ctx : Context) : Solver
+  fun mk_solver_for_logic = Z3_mk_solver_for_logic(ctx : Context, logic : Symbol) : Solver
   fun mk_str_le = Z3_mk_str_le(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_str_lt = Z3_mk_str_lt(ctx : Context, a : Ast, b : Ast) : Ast
   fun mk_str_to_int = Z3_mk_str_to_int(ctx : Context, s : Ast) : Ast
@@ -212,25 +241,60 @@ lib LibZ3
   fun model_eval = Z3_model_eval(ctx : Context, model : Model, ast : Ast, complete : Bool, result : Ast*) : Bool
   fun model_get_const_decl = Z3_model_get_const_decl(ctx : Context, model : Model, i : UInt32) : FuncDecl
   fun model_get_const_interp = Z3_model_get_const_interp(ctx : Context, model : Model, decl : FuncDecl) : Ast
+  fun model_get_func_decl = Z3_model_get_func_decl(ctx : Context, model : Model, i : UInt32) : FuncDecl
+  fun model_get_func_interp = Z3_model_get_func_interp(ctx : Context, model : Model, decl : FuncDecl) : FuncInterp
   fun model_get_num_consts = Z3_model_get_num_consts(ctx : Context, model : Model) : UInt32
+  fun model_get_num_funcs = Z3_model_get_num_funcs(ctx : Context, model : Model) : UInt32
+  fun model_has_interp = Z3_model_has_interp(ctx : Context, model : Model, decl : FuncDecl) : Bool
   fun model_inc_ref = Z3_model_inc_ref(ctx : Context, model : Model) : Void
   fun model_to_string = Z3_model_to_string(ctx : Context, model : Model) : CString
+  fun optimize_assert = Z3_optimize_assert(ctx : Context, opt : Optimize, ast : Ast) : Void
+  fun optimize_assert_and_track = Z3_optimize_assert_and_track(ctx : Context, opt : Optimize, ast : Ast, tracker : Ast) : Void
+  fun optimize_assert_soft = Z3_optimize_assert_soft(ctx : Context, opt : Optimize, ast : Ast, weight : CString, id : Void*) : UInt32
+  fun optimize_check = Z3_optimize_check(ctx : Context, opt : Optimize, count : UInt32, assumptions : Ast*) : LBool
+  fun optimize_from_file = Z3_optimize_from_file(ctx : Context, opt : Optimize, path : CString) : Void
+  fun optimize_from_string = Z3_optimize_from_string(ctx : Context, opt : Optimize, str : CString) : Void
+  fun optimize_get_assertions = Z3_optimize_get_assertions(ctx : Context, opt : Optimize) : AstVector
+  fun optimize_get_help = Z3_optimize_get_help(ctx : Context, opt : Optimize) : CString
+  fun optimize_get_model = Z3_optimize_get_model(ctx : Context, opt : Optimize) : Model
+  fun optimize_get_reason_unknown = Z3_optimize_get_reason_unknown(ctx : Context, opt : Optimize) : CString
+  fun optimize_get_statistics = Z3_optimize_get_statistics(ctx : Context, opt : Optimize) : Stats
+  fun optimize_get_unsat_core = Z3_optimize_get_unsat_core(ctx : Context, opt : Optimize) : AstVector
+  fun optimize_inc_ref = Z3_optimize_inc_ref(ctx : Context, opt : Optimize) : Void
+  fun optimize_maximize = Z3_optimize_maximize(ctx : Context, opt : Optimize, ast : Ast) : UInt32
+  fun optimize_minimize = Z3_optimize_minimize(ctx : Context, opt : Optimize, ast : Ast) : UInt32
+  fun optimize_pop = Z3_optimize_pop(ctx : Context, opt : Optimize) : Void
+  fun optimize_push = Z3_optimize_push(ctx : Context, opt : Optimize) : Void
+  fun optimize_set_initial_value = Z3_optimize_set_initial_value(ctx : Context, opt : Optimize, var : Ast, value : Ast) : Void
+  fun optimize_to_string = Z3_optimize_to_string(ctx : Context, opt : Optimize) : CString
   fun set_error = Z3_set_error(ctx : Context, code : ErrorCode) : Void
   fun set_error_handler = Z3_set_error_handler(ctx : Context, handler : (Context, ErrorCode) -> Void) : Void
   fun simplify = Z3_simplify(ctx : Context, ast : Ast) : Ast
   fun solver_assert = Z3_solver_assert(ctx : Context, solver : Solver, ast : Ast) : Void
   fun solver_assert_and_track = Z3_solver_assert_and_track(ctx : Context, solver : Solver, ast : Ast, tracker : Ast) : Void
   fun solver_check = Z3_solver_check(ctx : Context, solver : Solver) : LBool
+  fun solver_check_assumptions = Z3_solver_check_assumptions(ctx : Context, solver : Solver, count : UInt32, assumptions : Ast*) : LBool
+  fun solver_cube = Z3_solver_cube(ctx : Context, solver : Solver, vars : AstVector, backtrack_level : UInt32) : AstVector
+  fun solver_from_file = Z3_solver_from_file(ctx : Context, solver : Solver, path : CString) : Void
+  fun solver_from_string = Z3_solver_from_string(ctx : Context, solver : Solver, str : CString) : Void
   fun solver_get_assertions = Z3_solver_get_assertions(ctx : Context, solver : Solver) : AstVector
+  fun solver_get_consequences = Z3_solver_get_consequences(ctx : Context, solver : Solver, assumptions : AstVector, variables : AstVector, consequences : AstVector) : LBool
+  fun solver_get_help = Z3_solver_get_help(ctx : Context, solver : Solver) : CString
   fun solver_get_model = Z3_solver_get_model(ctx : Context, solver : Solver) : Model
+  fun solver_get_non_units = Z3_solver_get_non_units(ctx : Context, solver : Solver) : AstVector
   fun solver_get_num_scopes = Z3_solver_get_num_scopes(ctx : Context, solver : Solver) : UInt32
   fun solver_get_reason_unknown = Z3_solver_get_reason_unknown(ctx : Context, solver : Solver) : CString
   fun solver_get_statistics = Z3_solver_get_statistics(ctx : Context, solver : Solver) : Stats
+  fun solver_get_trail = Z3_solver_get_trail(ctx : Context, solver : Solver) : AstVector
+  fun solver_get_units = Z3_solver_get_units(ctx : Context, solver : Solver) : AstVector
   fun solver_get_unsat_core = Z3_solver_get_unsat_core(ctx : Context, solver : Solver) : AstVector
   fun solver_inc_ref = Z3_solver_inc_ref(ctx : Context, solver : Solver) : Void
+  fun solver_interrupt = Z3_solver_interrupt(ctx : Context, solver : Solver) : Void
   fun solver_pop = Z3_solver_pop(ctx : Context, solver : Solver, n : UInt32) : Void
   fun solver_push = Z3_solver_push(ctx : Context, solver : Solver) : Void
   fun solver_reset = Z3_solver_reset(ctx : Context, solver : Solver) : Void
+  fun solver_set_initial_value = Z3_solver_set_initial_value(ctx : Context, solver : Solver, var : Ast, value : Ast) : Void
+  fun solver_to_dimacs_string = Z3_solver_to_dimacs_string(ctx : Context, solver : Solver, include_names : Bool) : CString
   fun solver_to_string = Z3_solver_to_string(ctx : Context, solver : Solver) : CString
   fun stats_get_double_value = Z3_stats_get_double_value(ctx : Context, stats : Stats, i : UInt32) : Float64
   fun stats_get_key = Z3_stats_get_key(ctx : Context, stats : Stats, i : UInt32) : CString

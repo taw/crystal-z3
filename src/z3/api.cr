@@ -33,120 +33,139 @@ module Z3
     end
 
     {% for name in %w[
-      get_algebraic_number_lower
-      get_algebraic_number_upper
-      get_ast_kind
-      get_bool_value
-      get_range
-      is_algebraic_number
-      is_eq_ast
-      is_string
-      mk_abs
-      mk_bit2bool
-      mk_bv2int
-      mk_bvadd
-      mk_bvadd_no_overflow
-      mk_bvadd_no_underflow
-      mk_bvand
-      mk_bvashr
-      mk_bvlshr
-      mk_bvmul
-      mk_bvmul_no_overflow
-      mk_bvmul_no_underflow
-      mk_bvnand
-      mk_bvneg
-      mk_bvneg_no_overflow
-      mk_bvnor
-      mk_bvnot
-      mk_bvor
-      mk_bvredand
-      mk_bvredor
-      mk_bvsdiv
-      mk_bvsdiv_no_overflow
-      mk_bvsge
-      mk_bvsgt
-      mk_bvshl
-      mk_bvsle
-      mk_bvslt
-      mk_bvsmod
-      mk_bvsrem
-      mk_bvsub
-      mk_bvsub_no_overflow
-      mk_bvsub_no_underflow
-      mk_bvudiv
-      mk_bvuge
-      mk_bvugt
-      mk_bvule
-      mk_bvult
-      mk_bvurem
-      mk_bvxnor
-      mk_bvxor
-      mk_char
-      mk_char_from_bv
-      mk_char_is_digit
-      mk_char_le
-      mk_char_to_bv
-      mk_char_to_int
-      mk_concat
-      mk_div
-      mk_divides
-      mk_eq
-      mk_ext_rotate_left
-      mk_ext_rotate_right
-      mk_extract
-      mk_false
-      mk_ge
-      mk_gt
-      mk_iff
-      mk_implies
-      mk_int2bv
-      mk_int2real
-      mk_int_to_str
-      mk_is_int
-      mk_ite
-      mk_le
-      mk_lt
-      mk_mod
-      mk_not
-      mk_power
-      mk_real2int
-      mk_rem
-      mk_repeat
-      mk_rotate_left
-      mk_rotate_right
-      mk_sbv_to_str
-      mk_seq_at
-      mk_seq_contains
-      mk_seq_empty
-      mk_seq_extract
-      mk_seq_index
-      mk_seq_last_index
-      mk_seq_length
-      mk_seq_nth
-      mk_seq_prefix
-      mk_seq_replace
-      mk_seq_replace_all
-      mk_seq_suffix
-      mk_seq_unit
-      mk_sign_ext
-      mk_solver
-      mk_str_le
-      mk_str_lt
-      mk_str_to_int
-      mk_string_from_code
-      mk_string_to_code
-      mk_true
-      mk_ubv_to_str
-      mk_unary_minus
-      mk_xor
-      mk_zero_ext
-      model_get_const_decl
-      model_get_num_consts
-      simplify
-      solver_check
-      solver_get_model
-      solver_get_num_scopes
-    ] %}
+                     func_entry_get_arg
+                     func_entry_get_num_args
+                     func_entry_get_value
+                     func_interp_get_arity
+                     func_interp_get_else
+                     func_interp_get_entry
+                     func_interp_get_num_entries
+                     get_app_decl
+                     get_arity
+                     get_decl_kind
+                     get_domain
+                     get_algebraic_number_lower
+                     get_algebraic_number_upper
+                     get_ast_kind
+                     get_bool_value
+                     get_range
+                     is_algebraic_number
+                     is_eq_ast
+                     is_string
+                     mk_abs
+                     mk_bit2bool
+                     mk_bv2int
+                     mk_bvadd
+                     mk_bvadd_no_overflow
+                     mk_bvadd_no_underflow
+                     mk_bvand
+                     mk_bvashr
+                     mk_bvlshr
+                     mk_bvmul
+                     mk_bvmul_no_overflow
+                     mk_bvmul_no_underflow
+                     mk_bvnand
+                     mk_bvneg
+                     mk_bvneg_no_overflow
+                     mk_bvnor
+                     mk_bvnot
+                     mk_bvor
+                     mk_bvredand
+                     mk_bvredor
+                     mk_bvsdiv
+                     mk_bvsdiv_no_overflow
+                     mk_bvsge
+                     mk_bvsgt
+                     mk_bvshl
+                     mk_bvsle
+                     mk_bvslt
+                     mk_bvsmod
+                     mk_bvsrem
+                     mk_bvsub
+                     mk_bvsub_no_overflow
+                     mk_bvsub_no_underflow
+                     mk_bvudiv
+                     mk_bvuge
+                     mk_bvugt
+                     mk_bvule
+                     mk_bvult
+                     mk_bvurem
+                     mk_bvxnor
+                     mk_bvxor
+                     mk_char
+                     mk_char_from_bv
+                     mk_char_is_digit
+                     mk_char_le
+                     mk_char_to_bv
+                     mk_char_to_int
+                     mk_concat
+                     mk_div
+                     mk_divides
+                     mk_eq
+                     mk_ext_rotate_left
+                     mk_ext_rotate_right
+                     mk_extract
+                     mk_false
+                     mk_ge
+                     mk_gt
+                     mk_iff
+                     mk_implies
+                     mk_int2bv
+                     mk_int2real
+                     mk_int_to_str
+                     mk_is_int
+                     mk_ite
+                     mk_le
+                     mk_lt
+                     mk_mod
+                     mk_not
+                     mk_power
+                     mk_real2int
+                     mk_rem
+                     mk_repeat
+                     mk_rotate_left
+                     mk_rotate_right
+                     mk_sbv_to_str
+                     mk_seq_at
+                     mk_seq_contains
+                     mk_seq_empty
+                     mk_seq_extract
+                     mk_seq_index
+                     mk_seq_last_index
+                     mk_seq_length
+                     mk_seq_nth
+                     mk_seq_prefix
+                     mk_seq_replace
+                     mk_seq_replace_all
+                     mk_seq_suffix
+                     mk_seq_unit
+                     mk_sign_ext
+                     mk_solver
+                     mk_str_le
+                     mk_str_lt
+                     mk_str_to_int
+                     mk_string_from_code
+                     mk_string_to_code
+                     mk_true
+                     mk_ubv_to_str
+                     mk_unary_minus
+                     mk_xor
+                     mk_zero_ext
+                     mk_optimize
+                     mk_simple_solver
+                     model_get_func_decl
+                     model_get_num_funcs
+                     model_has_interp
+                     optimize_get_model
+                     optimize_maximize
+                     optimize_minimize
+                     model_get_const_decl
+                     model_get_num_consts
+                     simplify
+                     solver_check
+                     solver_get_model
+                     solver_get_num_scopes
+                   ] %}
       def {{name.id}}(*args)
         checked LibZ3.{{name.id}}(Context, *args)
       end
@@ -155,14 +174,30 @@ module Z3
     # The same, for the calls which answer nothing - Crystal won't let a void lib
     # call be passed to `checked`, or assigned anywhere
     {% for name in %w[
-      model_inc_ref
-      solver_assert
-      solver_assert_and_track
-      solver_inc_ref
-      solver_pop
-      solver_push
-      solver_reset
-    ] %}
+                     func_entry_dec_ref
+                     func_entry_inc_ref
+                     func_interp_dec_ref
+                     func_interp_inc_ref
+                     optimize_assert
+                     optimize_assert_and_track
+                     optimize_from_file
+                     optimize_from_string
+                     optimize_inc_ref
+                     optimize_pop
+                     optimize_push
+                     optimize_set_initial_value
+                     solver_from_file
+                     solver_from_string
+                     solver_interrupt
+                     solver_set_initial_value
+                     model_inc_ref
+                     solver_assert
+                     solver_assert_and_track
+                     solver_inc_ref
+                     solver_pop
+                     solver_push
+                     solver_reset
+                   ] %}
       def {{name.id}}(*args)
         LibZ3.{{name.id}}(Context, *args)
         check_error
@@ -170,14 +205,14 @@ module Z3
     {% end %}
 
     {% for name in %w[
-      mk_add
-      mk_and
-      mk_distinct
-      mk_mul
-      mk_or
-      mk_seq_concat
-      mk_sub
-    ] %}
+                     mk_add
+                     mk_and
+                     mk_distinct
+                     mk_mul
+                     mk_or
+                     mk_seq_concat
+                     mk_sub
+                   ] %}
       def {{name.id}}(asts)
         checked LibZ3.{{name.id}}(Context, asts.size, asts.map(&.to_unsafe))
       end
@@ -211,17 +246,39 @@ module Z3
       checked LibZ3.mk_distinct(Context, 2, [a.to_unsafe, b.to_unsafe])
     end
 
-    def model_to_string(model)
-      String.new checked(LibZ3.model_to_string(Context, model))
-    end
+    # The calls which answer a C string. Z3 owns the buffer and reuses it, so each
+    # one has to be copied into a Crystal String before the next call.
+    {% for name in %w[
+                     ast_to_string
+                     get_numeral_string
+                     model_to_string
+                     optimize_get_help
+                     optimize_get_reason_unknown
+                     optimize_to_string
+                     solver_get_help
+                     solver_get_reason_unknown
+                     solver_to_dimacs_string
+                     solver_to_string
+                   ] %}
+      def {{name.id}}(*args)
+        String.new checked(LibZ3.{{name.id}}(Context, *args))
+      end
+    {% end %}
 
-    def ast_to_string(ast)
-      String.new checked(LibZ3.ast_to_string(Context, ast))
-    end
-
-    def get_numeral_string(ast)
-      String.new checked(LibZ3.get_numeral_string(Context, ast))
-    end
+    # The calls which answer an AST vector, which is Z3's array of terms
+    {% for name in %w[
+                     optimize_get_assertions
+                     optimize_get_unsat_core
+                     solver_get_assertions
+                     solver_get_non_units
+                     solver_get_trail
+                     solver_get_unsat_core
+                     solver_get_units
+                   ] %}
+      def {{name.id}}(*args)
+        read_ast_vector checked(LibZ3.{{name.id}}(Context, *args))
+      end
+    {% end %}
 
     # A Z3 string is a sequence of code points, and these two are the only calls which
     # pass one either way without escaping it into ASCII first
@@ -294,24 +351,13 @@ module Z3
       new_from_ast_pointer checked(LibZ3.model_get_const_interp(Context, model, decl))
     end
 
-    def solver_to_string(solver)
-      String.new checked(LibZ3.solver_to_string(Context, solver))
-    end
+    {% for name in %w[optimize_get_statistics solver_get_statistics] %}
+      def {{name.id}}(*args)
+        unpack_statistics checked(LibZ3.{{name.id}}(Context, *args))
+      end
+    {% end %}
 
-    def solver_get_reason_unknown(solver)
-      String.new checked(LibZ3.solver_get_reason_unknown(Context, solver))
-    end
-
-    def solver_get_assertions(solver)
-      read_ast_vector checked(LibZ3.solver_get_assertions(Context, solver))
-    end
-
-    def solver_get_unsat_core(solver)
-      read_ast_vector checked(LibZ3.solver_get_unsat_core(Context, solver))
-    end
-
-    def solver_get_statistics(solver)
-      stats = checked LibZ3.solver_get_statistics(Context, solver)
+    private def unpack_statistics(stats)
       size = checked LibZ3.stats_size(Context, stats)
       result = {} of String => (UInt32 | Float64)
       size.times do |i|
@@ -330,14 +376,141 @@ module Z3
       # or it gets reclaimed out from under us.
       LibZ3.ast_vector_inc_ref(Context, vec)
       check_error
+      result = ast_vector_contents(vec)
+      LibZ3.ast_vector_dec_ref(Context, vec)
+      check_error
+      result
+    end
+
+    # A vector we build ourselves, for the calls which take one. It comes back at
+    # refcount 1 and the caller has to `release_ast_vector` it.
+    def new_ast_vector(exprs)
+      vec = checked LibZ3.mk_ast_vector(Context)
+      LibZ3.ast_vector_inc_ref(Context, vec)
+      check_error
+      exprs.each do |expr|
+        LibZ3.ast_vector_push(Context, vec, expr.to_unsafe)
+        check_error
+      end
+      vec
+    end
+
+    def release_ast_vector(vec)
+      LibZ3.ast_vector_dec_ref(Context, vec)
+      check_error
+    end
+
+    private def ast_vector_contents(vec)
       size = checked LibZ3.ast_vector_size(Context, vec)
       result = [] of AnyExpr
       size.times do |i|
         result << new_from_ast_pointer(checked LibZ3.ast_vector_get(Context, vec, i))
       end
-      LibZ3.ast_vector_dec_ref(Context, vec)
-      check_error
       result
+    end
+
+    def mk_symbol(name : String)
+      checked LibZ3.mk_string_symbol(Context, name)
+    end
+
+    {% for name in %w[mk_func_decl mk_rec_func_decl] %}
+      def {{name.id}}(name : String, domain : Array(LibZ3::Sort), range : LibZ3::Sort)
+        checked LibZ3.{{name.id}}(Context, mk_symbol(name), domain.size, domain, range)
+      end
+    {% end %}
+
+    def mk_fresh_func_decl(prefix : String, domain : Array(LibZ3::Sort), range : LibZ3::Sort)
+      checked LibZ3.mk_fresh_func_decl(Context, prefix, domain.size, domain, range)
+    end
+
+    def mk_fresh_const(prefix : String, sort)
+      checked LibZ3.mk_fresh_const(Context, prefix, sort)
+    end
+
+    def mk_app(decl, args)
+      checked LibZ3.mk_app(Context, decl, args.size, args.map(&.to_unsafe))
+    end
+
+    def add_rec_def(decl, args, body)
+      LibZ3.add_rec_def(Context, decl, args.size, args.map(&.to_unsafe), body)
+      check_error
+    end
+
+    # The decl of a variable - `a` in `a + 1` - which is what Z3 wants wherever it
+    # talks about one. Anything else is a term rather than a variable, and the two
+    # calls which take one (`set_initial_value`, `model_has_interp`) both mean this.
+    def const_decl(expr)
+      unless get_ast_kind(expr) == LibZ3::AstKind::App
+        raise Z3::Exception.new("Expected a variable, got #{expr}")
+      end
+      decl = checked LibZ3.get_app_decl(Context, checked(LibZ3.to_app(Context, expr)))
+      unless get_arity(decl) == 0
+        raise Z3::Exception.new("Expected a variable, got #{expr}")
+      end
+      decl
+    end
+
+    def mk_solver_for_logic(logic : String)
+      checked LibZ3.mk_solver_for_logic(Context, mk_symbol(logic))
+    end
+
+    def optimize_assert_soft(optimize, expr, weight : String)
+      # The third argument groups soft constraints, and wants a raw Z3 symbol nothing
+      # here builds - a null one is Z3's own "no group"
+      checked LibZ3.optimize_assert_soft(Context, optimize, expr, weight, Pointer(Void).null)
+    end
+
+    {% for name in %w[optimize_check solver_check_assumptions] %}
+      def {{name.id}}(target, assumptions)
+        checked LibZ3.{{name.id}}(Context, target, assumptions.size, assumptions.map(&.to_unsafe))
+      end
+    {% end %}
+
+    # Answers the check result along with the consequences it found, since an
+    # :unsat or :unknown means there are none to speak of
+    def solver_get_consequences(solver, assumptions, variables)
+      _assumptions = new_ast_vector(assumptions)
+      _variables = new_ast_vector(variables)
+      _consequences = new_ast_vector([] of AnyExpr)
+      result = checked LibZ3.solver_get_consequences(Context, solver, _assumptions, _variables, _consequences)
+      consequences = ast_vector_contents(_consequences)
+      release_ast_vector(_assumptions)
+      release_ast_vector(_variables)
+      release_ast_vector(_consequences)
+      {result, consequences}
+    end
+
+    def solver_cube(solver, variables, backtrack_level : UInt32)
+      _variables = new_ast_vector(variables)
+      result = read_ast_vector checked(LibZ3.solver_cube(Context, solver, _variables, backtrack_level))
+      release_ast_vector(_variables)
+      result
+    end
+
+    # What a model says a function does: the argument lists it had to pin down, and
+    # the `else` branch which answers for every other one.
+    def model_get_func_interp(model, decl)
+      interp = checked LibZ3.model_get_func_interp(Context, model, decl)
+      raise Z3::Exception.new("Model has no interpretation for this function") if interp.null?
+      LibZ3.func_interp_inc_ref(Context, interp)
+      check_error
+      entries = [] of Tuple(Array(AnyExpr), AnyExpr)
+      func_interp_get_num_entries(interp).times do |i|
+        entry = func_interp_get_entry(interp, i)
+        LibZ3.func_entry_inc_ref(Context, entry)
+        check_error
+        args = [] of AnyExpr
+        func_entry_get_num_args(entry).times do |j|
+          args << new_from_ast_pointer(func_entry_get_arg(entry, j))
+        end
+        entries << {args, new_from_ast_pointer(func_entry_get_value(entry))}
+        LibZ3.func_entry_dec_ref(Context, entry)
+        check_error
+      end
+      default = new_from_ast_pointer(func_interp_get_else(interp))
+      LibZ3.func_interp_dec_ref(Context, interp)
+      check_error
+      {entries, default}
     end
   end
 end
